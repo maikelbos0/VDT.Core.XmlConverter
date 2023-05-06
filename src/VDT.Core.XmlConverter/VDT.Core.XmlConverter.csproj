@@ -8,16 +8,15 @@
 
 	<PropertyGroup>
 		<PackageId>VDT.Core.XmlConverter</PackageId>
-		<Version>2.1.0</Version>
+		<Version>2.1.1</Version>
 		<Title>VDT.Core.XmlConverter</Title>
 		<Description>Converter for changing XML documents to other formats such as Markdown</Description>
-		<PackageReleaseNotes>- Added support for definition lists in Markdown
-- Improved Markdown results</PackageReleaseNotes>
+		<PackageReleaseNotes>- Moved project to separate repository</PackageReleaseNotes>
 		<Authors>Maikel Bos</Authors>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<Copyright>Copyright © 2022 Maikel Bos</Copyright>
 		<PackageTags>XML, HTML, Markdown, markup, format, convert, converter, transform, transformer</PackageTags>
-		<PackageProjectUrl>https://github.com/maikelbos0/VDT.Core</PackageProjectUrl>
+		<PackageProjectUrl>https://github.com/maikelbos0/VDT.Core.XmlConverter</PackageProjectUrl>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	</PropertyGroup>
