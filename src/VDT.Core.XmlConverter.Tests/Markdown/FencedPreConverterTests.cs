@@ -33,7 +33,7 @@ namespace VDT.Core.XmlConverter.Tests.Markdown {
 
             converter.RenderEnd(ElementDataHelper.Create("pre"), writer);
 
-            Assert.Equal("\r\n```\r\n", writer.ToString());
+            Assert.Equal("\r\n```\r\n", writer.ToString(), ignoreLineEndingDifferences: true);
         }
     }
 }

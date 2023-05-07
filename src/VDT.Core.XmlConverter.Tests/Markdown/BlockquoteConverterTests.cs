@@ -47,7 +47,7 @@ namespace VDT.Core.XmlConverter.Tests.Markdown {
 
             converter.RenderEnd(elementData, writer);
 
-            Assert.Equal("\t\r\n", writer.ToString());
+            Assert.Equal("\t\r\n", writer.ToString(), ignoreLineEndingDifferences: true);
             Assert.Equal("\t", Assert.Single(Assert.IsType<Stack<string>>(elementData.AdditionalData[nameof(ContentTracker.Prefixes)])));
         }
     }
