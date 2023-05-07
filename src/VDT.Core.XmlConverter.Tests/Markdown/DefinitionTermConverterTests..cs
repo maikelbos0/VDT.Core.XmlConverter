@@ -36,7 +36,7 @@ namespace VDT.Core.XmlConverter.Tests.Markdown {
 
             converter.RenderStart(elementData, writer);
 
-            Assert.Equal(expectedOutput, writer.ToString());
+            Assert.Equal(expectedOutput, writer.ToString(), ignoreLineEndingDifferences: true);
         }
 
         [Theory]
@@ -55,7 +55,7 @@ namespace VDT.Core.XmlConverter.Tests.Markdown {
 
             converter.RenderEnd(elementData, writer);
 
-            Assert.Equal(expectedOutput, writer.ToString());
+            Assert.Equal(expectedOutput, writer.ToString(), ignoreLineEndingDifferences: true);
         }
     }
 }
