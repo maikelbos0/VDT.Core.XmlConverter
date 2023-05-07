@@ -9,7 +9,7 @@ namespace VDT.Core.XmlConverter.Markdown {
     /// Tracks Markdown content being written to a <see cref="TextWriter"/>; used to determine later output
     /// </summary>
     public class ContentTracker {
-        private static Regex newLineFinder = new Regex("\r\n?|\n", RegexOptions.Compiled);
+        private static readonly Regex newLineFinder = new Regex("\r\n?|\n", RegexOptions.Compiled);
 
         private readonly INodeData nodeData;
 

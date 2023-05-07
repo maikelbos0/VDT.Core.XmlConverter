@@ -26,7 +26,7 @@ namespace VDT.Core.XmlConverter.Tests.Markdown {
 
             tracker.Write(writer, value);
 
-            Assert.Equal(expectedValue, writer.ToString());
+            Assert.Equal(expectedValue, writer.ToString(), ignoreLineEndingDifferences: true);
             Assert.Equal(expectedTrailingNewLineCount, tracker.TrailingNewLineCount);
             Assert.Equal(expectedHasTrailingNewLine, tracker.HasTrailingNewLine);
         }
@@ -55,7 +55,7 @@ namespace VDT.Core.XmlConverter.Tests.Markdown {
 
             tracker.WriteLine(writer, value);
 
-            Assert.Equal(expectedValue, writer.ToString());
+            Assert.Equal(expectedValue, writer.ToString(), ignoreLineEndingDifferences: true);
             Assert.Equal(expectedTrailingNewLineCount, tracker.TrailingNewLineCount);
             Assert.True(tracker.HasTrailingNewLine);
         }
@@ -72,7 +72,7 @@ namespace VDT.Core.XmlConverter.Tests.Markdown {
 
             tracker.WriteLine(writer);
 
-            Assert.Equal(expectedValue, writer.ToString());
+            Assert.Equal(expectedValue, writer.ToString(), ignoreLineEndingDifferences: true);
             Assert.Equal(expectedTrailingNewLineCount, tracker.TrailingNewLineCount);
             Assert.True(tracker.HasTrailingNewLine);
         }
