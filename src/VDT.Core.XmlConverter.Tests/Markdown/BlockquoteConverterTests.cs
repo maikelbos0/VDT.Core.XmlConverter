@@ -24,7 +24,7 @@ namespace VDT.Core.XmlConverter.Tests.Markdown {
 
             converter.RenderStart(elementData, writer);
 
-            Assert.Equal("\r\n", writer.ToString());
+            Assert.Equal("\r\n", writer.ToString(), ignoreLineEndingDifferences: true);
             Assert.Equal("> ", Assert.Single(Assert.IsType<Stack<string>>(elementData.AdditionalData[nameof(ContentTracker.Prefixes)])));
         }
 

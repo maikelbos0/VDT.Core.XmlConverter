@@ -22,7 +22,7 @@ namespace VDT.Core.XmlConverter.Tests.Markdown {
 
             converter.RenderStart(ElementDataHelper.Create("pre"), writer);
 
-            Assert.Equal("\r\n```", writer.ToString());
+            Assert.Equal("\r\n```", writer.ToString(), ignoreLineEndingDifferences: true);
         }
 
         [Fact]

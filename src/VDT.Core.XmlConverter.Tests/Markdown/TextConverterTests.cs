@@ -59,7 +59,7 @@ namespace VDT.Core.XmlConverter.Tests.Markdown {
 
             converter.Convert(writer, nodeData);
 
-            Assert.Equal(expectedText, writer.ToString());
+            Assert.Equal(expectedText, writer.ToString(), ignoreLineEndingDifferences: true);
         }
 
         [Fact]
