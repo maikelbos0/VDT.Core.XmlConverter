@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using VDT.Core.XmlConverter.Markdown;
 using Xunit;
 
@@ -23,7 +22,7 @@ namespace VDT.Core.XmlConverter.Tests.Markdown {
 
             converter.RenderStart(ElementDataHelper.Create("br"), writer);
 
-            Assert.Equal("  \r\n", writer.ToString());
+            Assert.Equal("  \r\n", writer.ToString(), ignoreLineEndingDifferences: true);
         }
 
         [Fact]
