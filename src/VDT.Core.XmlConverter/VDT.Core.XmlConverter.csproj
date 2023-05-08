@@ -8,10 +8,11 @@
 
 	<PropertyGroup>
 		<PackageId>VDT.Core.XmlConverter</PackageId>
-		<Version>2.1.1</Version>
+		<Version>2.1.2</Version>
 		<Title>VDT.Core.XmlConverter</Title>
+		<PackageIcon>icon_128.png</PackageIcon>
 		<Description>Converter for changing XML documents to other formats such as Markdown</Description>
-		<PackageReleaseNotes>- Moved project to separate repository</PackageReleaseNotes>
+		<PackageReleaseNotes>- Added package icon</PackageReleaseNotes>
 		<Authors>Maikel Bos</Authors>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<Copyright>Copyright © 2022 Maikel Bos</Copyright>
@@ -27,6 +28,7 @@
 
 	<ItemGroup>
 		<None Include="README.md" pack="true" PackagePath="." />
+		<None Include="icon_128.png" pack="true" PackagePath="." />
 	</ItemGroup>
 
 	<ItemGroup>
