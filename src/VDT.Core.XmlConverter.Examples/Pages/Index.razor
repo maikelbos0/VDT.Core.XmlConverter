@@ -5,3 +5,9 @@
 <p>
     Converter for converting XML documents to other formats such as Markdown.
 </p>
+
+<p>
+    To convert nodes into other content, implement your own <code>INodeConverter</code> or <code>IElementConverter</code> and set it up using the 
+    <code>ConverterOptions</code> object passed when creating your <code>XmlConverter</code>. This allows you to strip or replace specific XML nodes or XML 
+    elements with your own content.
+</p>
