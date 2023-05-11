@@ -12,6 +12,31 @@
     The below example will convert any comments that match the selected criteria to a normal XML element.
 </p>
 
-@code {
 
+<div class="row">
+    <div class="col-12 col-md-6 col-xl-4">
+        <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" id="applyParentElementFilter" checked="@ApplyParentElementFilter" @onchange="() => ApplyParentElementFilter = !ApplyParentElementFilter" />
+            <label class="form-check-label" for="applyParentElementFilter">Apply parent element filter</label>
+        </div>
+
+        <div class="mb-3">
+            <label for="parentElementFilter" class="form-label">Parent element name</label>
+            <input type="text" class="form-control" id="parentElementFilter" @bind-value="@ParentElementFilter" />
+        </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-4 mb-3 align-self-end">
+        <button class="btn btn-primary w-100" @onclick="Convert">Convert</button>
+    </div>
+</div>
+
+
+@code {
+    private bool ApplyParentElementFilter { get; set; }
+    private string? ParentElementFilter { get; set; }
+
+    private void Convert() {
+        
+    }
 }
