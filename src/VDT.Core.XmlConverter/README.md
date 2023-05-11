@@ -51,7 +51,7 @@ converter to turn comment nodes in certain elements into text.
 ```
 public class CustomCommentConverter : INodeConverter {
     public void Convert(XmlReader reader, TextWriter writer, NodeData data) {
-        if (data.Ancestors.FirstOrDefault().Name == "CommentData") {
+        if (data.Ancestors.FirstOrDefault()?.Name == "CommentData") {
             writer.Write(reader.Value.Trim());
         }
         else {
