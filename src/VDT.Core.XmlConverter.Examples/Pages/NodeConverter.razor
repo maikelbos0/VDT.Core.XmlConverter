@@ -1,0 +1,15 @@
+﻿<h1>Node Converter</h1>
+
+<p>
+    Any node type (except for <code>XmlNodeType.Element</code> which has more detailed options, see below) that is supported by <code>XmlReader</code> can be 
+    converted by implementing the <code>INodeConverter</code> interface and assigning this custom implementation to the correct node type in the 
+    <code>ConverterOptions</code> that are passed to the converter.
+</p>
+
+<p>
+    The below example will convert any comments that match the selected criteria to a normal XML element.
+</p>
+
+@code {
+
+}
