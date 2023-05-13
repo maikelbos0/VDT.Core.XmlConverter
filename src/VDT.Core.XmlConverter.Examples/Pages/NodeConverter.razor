@@ -47,10 +47,14 @@
     </div>
 </div>
 
-<pre>
-    @Output
-</pre>
-
+@if (Output != null) {
+    <div class="row">
+        <div class="col-12 mb-3">
+            <label for="input">Output</label>
+            <textarea class="form-control" id="input" @bind="@Output" rows="10" />
+        </div>
+    </div>
+}
 
 @code {
     private string? Input { get; set; } = @"<Data>
