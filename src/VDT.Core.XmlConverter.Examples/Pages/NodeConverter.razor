@@ -3,8 +3,8 @@
 <h1>Node converter</h1>
 
 <p>
-    Any node type (except for <code>XmlNodeType.Element</code> which has more detailed options, see below) that is supported by <code>XmlReader</code> can be 
-    converted by implementing the <code>INodeConverter</code> interface and assigning this custom implementation to the correct node type in the 
+    Any node type (except for <code>XmlNodeType.Element</code> which has more detailed options, see below) that is supported by <code>XmlReader</code> can be
+    converted by implementing the <code>INodeConverter</code> interface and assigning this custom implementation to the correct node type in the
     <code>ConverterOptions</code> that are passed to the converter.
 </p>
 
@@ -12,17 +12,21 @@
     The below example will convert any comments that match the selected criteria to a normal XML element.
 </p>
 
-
 <div class="row">
+    <div class="col-12 col-md-6 col-xl-4 mb-3">
+        <label for="input">Input</label>
+        <textarea class="form-control" id="input" @bind="@Input" rows="10" />
+    </div>
+
     <div class="col-12 col-md-6 col-xl-4">
         <div class="form-check mb-3">
-            <input class="form-check-input" type="checkbox" id="applyParentElementFilter" checked="@ApplyParentElementFilter" @onchange="() => ApplyParentElementFilter = !ApplyParentElementFilter" />
-            <label class="form-check-label" for="applyParentElementFilter">Apply parent element filter</label>
+            <input class="form-check-input" type="checkbox" id="filterParentElementName" checked="@CommentConverter.FilterParentElementName" @onchange="() => CommentConverter.FilterParentElementName = !CommentConverter.FilterParentElementName" />
+            <label class="form-check-label" for="filterParentElementName">Filter on parent element name</label>
         </div>
 
         <div class="mb-3">
-            <label for="parentElementFilter" class="form-label">Parent element name</label>
-            <input type="text" class="form-control" id="parentElementFilter" @bind-value="@ParentElementFilter" />
+            <label for="parentElementName" class="form-label">Parent element name</label>
+            <input type="text" class="form-control" id="parentElementName" @bind-value="@CommentConverter.ParentElementName" />
         </div>
     </div>
 
@@ -31,12 +35,50 @@
     </div>
 </div>
 
+<pre>
+    @Output
+</pre>
+
 
 @code {
-    private bool ApplyParentElementFilter { get; set; }
-    private string? ParentElementFilter { get; set; }
+    private string? Input { get; set; } = @"<Data>
+    <!-- This comment will be left as-is -->
+    <CommentData><!-- This comment will be turned into a text node --></CommentData>
+</Data>";
+    private string? Output { get; set; }
+    private readonly CommentToElementConverter CommentConverter = new() {
+            FilterParentElementName = true,
+            ParentElementName = "CommentData"
+        };
+    private readonly Converter Converter;
+
+    public NodeConverter() {
+        Converter = new(new ConverterOptions() { CommentConverter = CommentConverter });
+    }
 
     private void Convert() {
-        
+        Output = Converter.Convert(Input ?? "");
+    }
+
+    class CommentToElementConverter : INodeConverter {
+        public bool FilterParentElementName { get; set; }
+        public string? ParentElementName { get; set; }
+
+        public void Convert(TextWriter writer, NodeData data) {
+            var shouldConvert = true;
+
+            if (FilterParentElementName) { 
+                shouldConvert = shouldConvert && data.Ancestors.FirstOrDefault()?.Name == ParentElementName;
+            }
+
+            if (shouldConvert) {
+                writer.Write(data.Value.Trim());
+            }
+            else {
+                writer.Write("<!--");
+                writer.Write(data.Value);
+                writer.Write("-->");
+            }
+        }
     }
 }
