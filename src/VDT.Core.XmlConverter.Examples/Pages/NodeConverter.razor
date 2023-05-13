@@ -13,7 +13,7 @@
 </p>
 
 <div class="row">
-    <div class="col-12 col-md-6 col-xl-4 mb-3">
+    <div class="col-12 mb-3">
         <label for="input">Input</label>
         <textarea class="form-control" id="input" @bind="@Input" rows="10" />
     </div>
@@ -30,6 +30,18 @@
         </div>
     </div>
 
+    <div class="col-12 col-md-6 col-xl-4">
+        <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" id="filterParentAttributeName" checked="@CommentConverter.FilterParentAttributeName" @onchange="() => CommentConverter.FilterParentAttributeName = !CommentConverter.FilterParentAttributeName" />
+            <label class="form-check-label" for="filterParentAttributeName">Filter on parent attribute name</label>
+        </div>
+
+        <div class="mb-3">
+            <label for="parentAttributeName" class="form-label">Parent attribute name</label>
+            <input type="text" class="form-control" id="parentAttributeName" @bind-value="@CommentConverter.ParentAttributeName" />
+        </div>
+    </div>
+
     <div class="col-12 col-md-6 col-xl-4 mb-3 align-self-end">
         <button class="btn btn-primary w-100" @onclick="Convert">Convert</button>
     </div>
@@ -43,13 +55,15 @@
 @code {
     private string? Input { get; set; } = @"<Data>
     <!-- This comment will be left as-is -->
-    <CommentData><!-- This comment will be turned into a text node --></CommentData>
+    <CommentData convert=""true""><!-- This comment will be turned into a text node --></CommentData>
 </Data>";
     private string? Output { get; set; }
     private readonly CommentToElementConverter CommentConverter = new() {
-            FilterParentElementName = true,
-            ParentElementName = "CommentData"
-        };
+        FilterParentElementName = true,
+        ParentElementName = "CommentData",
+        FilterParentAttributeName = true,
+        ParentAttributeName = "convert"
+    };
     private readonly Converter Converter;
 
     public NodeConverter() {
@@ -63,12 +77,18 @@
     class CommentToElementConverter : INodeConverter {
         public bool FilterParentElementName { get; set; }
         public string? ParentElementName { get; set; }
+        public bool FilterParentAttributeName { get; set; }
+        public string? ParentAttributeName { get; set; }
 
         public void Convert(TextWriter writer, NodeData data) {
             var shouldConvert = true;
 
-            if (FilterParentElementName) { 
+            if (FilterParentElementName) {
                 shouldConvert = shouldConvert && data.Ancestors.FirstOrDefault()?.Name == ParentElementName;
+            }
+
+            if (FilterParentAttributeName) {
+                shouldConvert = shouldConvert && (data.Ancestors.FirstOrDefault()?.Attributes.ContainsKey(ParentAttributeName ?? "") ?? false);
             }
 
             if (shouldConvert) {
