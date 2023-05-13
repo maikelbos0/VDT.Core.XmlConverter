@@ -49,14 +49,14 @@ Suppose you have XML documents in which some comments need to be converted into 
 converter to turn comment nodes in certain elements into text.
 
 ```
-public class CustomCommentConverter : INodeConverter {
-    public void Convert(XmlReader reader, TextWriter writer, NodeData data) {
+public class CommentToElementConverter : INodeConverter {
+    public void Convert(TextWriter writer, NodeData data) {
         if (data.Ancestors.FirstOrDefault()?.Name == "CommentData") {
-            writer.Write(reader.Value.Trim());
+            writer.Write(data.Value.Trim());
         }
         else {
             writer.Write("<!--");
-            writer.Write(reader.Value);
+            writer.Write(data.Value);
             writer.Write("-->");
         }
     }
@@ -68,7 +68,7 @@ var xml = @"<Data>
 </Data>";
 
 var converter = new Converter(new ConverterOptions() {
-    CommentConverter = new CustomCommentConverter()
+    CommentConverter = new CommentToElementConverter()
 });
 
 var result = converter.Convert(xml);
