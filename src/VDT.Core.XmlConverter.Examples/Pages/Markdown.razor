@@ -1,0 +1,46 @@
+﻿@page "/Markdown"
+@using VDT.Core.XmlConverter.Markdown;
+
+<h1>Markdown</h1>
+
+<p>
+    Methods to convert HTML to Markdown can be found in the <code>VDT.Core.XmlConverter.Markdown</code> namespace. Only converting HTML that is also valid XML
+    is supported, so if your documents are not well-formed XML an additional conversion is required first.
+</p>
+
+<p>
+    The below example will use the <code>ConverterOptionsBuilder</code> class to create a converter with customizable converter options. This converter will
+    then transform the HTML input to Markdown output.
+</p>
+
+<div class="row">
+    <div class="col-12 mb-3">
+        <label for="input">Input</label>
+        <textarea class="form-control" id="input" @bind="@Input" rows="10" />
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-4 mb-3 align-self-end">
+        <button class="btn btn-primary w-100" @onclick="Convert">Convert</button>
+    </div>
+</div>
+
+@if (Output != null) {
+    <div class="row">
+        <div class="col-12 mb-3">
+            <label for="input">Output</label>
+            <textarea class="form-control" id="input" @bind="@Output" rows="10" />
+        </div>
+    </div>
+}
+
+@code {
+    private string? Input { get; set; }
+    private string? Output { get; set; }
+    private ConverterOptionsBuilder ConverterOptionsBuilder = new();
+
+    private void Convert() {
+        var converter = new Converter(ConverterOptionsBuilder.Build());
+
+        Output = converter.Convert(Input ?? "");
+    }
+}
