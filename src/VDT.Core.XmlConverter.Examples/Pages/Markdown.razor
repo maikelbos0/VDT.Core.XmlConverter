@@ -20,13 +20,7 @@
 
     <div class="col-12 col-md-6 col-xl-4 mb-3 align-self-end">
         <label for="input">Target elements</label>
-
-        @foreach (var target in AllElementConverterTargets) {
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="@target.Item1" checked="@ConverterOptionsBuilder.ElementConverterTargets.Contains(target.Item1)" />
-                <label class="form-check-label" for="@target.Item1">@target.Item2</label>
-            </div>
-        }
+        <Multiselect Items="AllElementConverterTargets" @bind-SelectedItems="ConverterOptionsBuilder.ElementConverterTargets" />
     </div>
 
     <div class="col-12 col-md-6 col-xl-4 mb-3 align-self-end">
