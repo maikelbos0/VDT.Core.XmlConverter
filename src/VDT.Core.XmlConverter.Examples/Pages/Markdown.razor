@@ -44,7 +44,29 @@
 }
 
 @code {
-    private string? Input { get; set; }
+    private string? Input { get; set; } = @"<html>
+    <head>
+        <title>Example html page</title>
+    </head>
+    <body>
+        <h1>This is an example header</h1>
+        <p>
+            This paragraph could be used to explain what's going on, but instead it's just talking about itself in the third person. It enjoys being converted
+            to Markdown, and should be perfectly readable after conversion as well.
+        </p>
+        <ul>
+            <li>I'm in a list!</li>
+            <li>I'm also in it, and I could be <strong>bold</strong> and contain a <a href=""https://google.com"">hyperlink</a></li>
+            <li>
+                Now let's do something a bit more funky:
+                <ol>
+                    <li>I'm a list inside a list!</li>
+                    <li>It's crazy!</li>
+                </ol>
+            </li>
+        </ul>
+    </body>
+</html>";
     private List<(ElementConverterTarget, string)> AllElementConverterTargets { get; } = Enum.GetValues<ElementConverterTarget>()
         .Select(elementConverterTarget => (elementConverterTarget, Regex.Replace(elementConverterTarget.ToString(), @"(?<!^)([A-Z])", m => $" {m.Value.ToLower()}")))
         .ToList();
