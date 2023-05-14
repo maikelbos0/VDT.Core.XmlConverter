@@ -62,13 +62,13 @@
     <CommentData convert=""true""><!-- This comment will be turned into a text node --></CommentData>
 </Data>";
     private string? Output { get; set; }
-    private readonly CommentToElementConverter CommentConverter = new() {
+    private CommentToElementConverter CommentConverter { get; } = new() {
         FilterParentElementName = true,
         ParentElementName = "CommentData",
         FilterParentAttributeName = true,
         ParentAttributeName = "convert"
     };
-    private readonly Converter Converter;
+    private Converter Converter { get; }
 
     public NodeConverter() {
         Converter = new(new ConverterOptions() { CommentConverter = CommentConverter });
