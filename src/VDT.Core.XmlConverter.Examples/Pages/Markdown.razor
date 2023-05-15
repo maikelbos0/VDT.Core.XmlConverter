@@ -41,6 +41,11 @@
         </select>
     </div>
 
+    <div class="col-12 col-md-6 col-xl-4 mb-3">
+        <label for="tagsToRemove" class="form-label">Tags to remove</label>
+        <textarea class="form-control" id="tagsToRemove" rows="5" @onchange="SetTagsToRemove">@string.Join(Environment.NewLine, ConverterOptionsBuilder.TagsToRemove)</textarea>
+    </div>
+
     <div class="col-12 col-md-6 col-xl-4 mb-3 align-self-end">
         <button class="btn btn-primary w-100" @onclick="Convert">Convert</button>
     </div>
@@ -85,6 +90,17 @@
         .ToList();
     private ConverterOptionsBuilder ConverterOptionsBuilder = new();
     private string? Output { get; set; }
+
+    private void SetTagsToRemove(ChangeEventArgs args) {
+        var tagsToRemove = args.Value?.ToString();
+
+        if (tagsToRemove == null) {
+            ConverterOptionsBuilder.TagsToRemove.Clear();
+        }
+        else {
+            ConverterOptionsBuilder.TagsToRemove = tagsToRemove.Split(Environment.NewLine).ToHashSet();
+        }
+    }
 
     private void Convert() {
         var converter = new Converter(ConverterOptionsBuilder.Build());
