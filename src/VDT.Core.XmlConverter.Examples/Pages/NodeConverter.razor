@@ -14,7 +14,7 @@
 
 <div class="row">
     <div class="col-12 mb-3">
-        <label for="input">Input</label>
+        <label for="input" class="form-label">Input</label>
         <textarea class="form-control" id="input" @bind="@Input" rows="10" />
     </div>
 
@@ -50,8 +50,8 @@
 @if (Output != null) {
     <div class="row">
         <div class="col-12 mb-3">
-            <label for="input">Output</label>
-            <textarea class="form-control" id="input" @bind="@Output" rows="10" />
+            <label for="output" class="form-label">Output</label>
+            <textarea class="form-control" id="output" @bind="@Output" rows="10" />
         </div>
     </div>
 }
