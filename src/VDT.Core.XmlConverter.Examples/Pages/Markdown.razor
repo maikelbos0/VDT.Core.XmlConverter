@@ -23,6 +23,15 @@
         <Multiselect Items="AllElementConverterTargets" @bind-SelectedItems="ConverterOptionsBuilder.ElementConverterTargets" />
     </div>
 
+    <div class="col-12 col-md-6 col-xl-4 mb-3">
+        <label for="firstDayOfWeek" class="form-label">Pre conversion mode</label>
+        <select class="form-select" id="firstDayOfWeek" @onchange="args => ConverterOptionsBuilder.PreConversionMode = Enum.Parse<PreConversionMode>(args.Value!.ToString()!)">
+            @foreach (var preConversionMode in Enum.GetValues<PreConversionMode>()) {
+                <option value="@preConversionMode" selected="@(ConverterOptionsBuilder.PreConversionMode == preConversionMode)">@preConversionMode</option>
+            }
+        </select>
+    </div>
+
     <div class="col-12 col-md-6 col-xl-4 mb-3 align-self-end">
         <button class="btn btn-primary w-100" @onclick="Convert">Convert</button>
     </div>
@@ -48,6 +57,7 @@
             This paragraph could be used to explain what's going on, but instead it's just talking about itself in the third person. It enjoys being converted
             to Markdown, and should be perfectly readable after conversion as well.
         </p>
+        <pre>Here's a code block.</pre>
         <ul>
             <li>I'm in a list!</li>
             <li>I'm also in it, and I could be <strong>bold</strong> and contain a <a href=""https://google.com"">hyperlink</a></li>
