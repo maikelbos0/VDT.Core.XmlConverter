@@ -46,6 +46,11 @@
         <textarea class="form-control" id="tagsToRemove" rows="5" @onchange="SetTagsToRemove">@string.Join(Environment.NewLine, ConverterOptionsBuilder.TagsToRemove)</textarea>
     </div>
 
+    <div class="col-12 col-md-6 col-xl-4 mb-3">
+        <label for="elementsToRemove" class="form-label">Elements to remove</label>
+        <textarea class="form-control" id="elementsToRemove" rows="5" @onchange="SetElementsToRemove">@string.Join(Environment.NewLine, ConverterOptionsBuilder.ElementsToRemove)</textarea>
+    </div>
+
     <div class="col-12 col-md-6 col-xl-4 mb-3 align-self-end">
         <button class="btn btn-primary w-100" @onclick="Convert">Convert</button>
     </div>
@@ -99,6 +104,17 @@
         }
         else {
             ConverterOptionsBuilder.TagsToRemove = tagsToRemove.Split(Environment.NewLine).ToHashSet();
+        }
+    }
+
+    private void SetElementsToRemove(ChangeEventArgs args) {
+        var elementsToRemove = args.Value?.ToString();
+
+        if (elementsToRemove == null) {
+            ConverterOptionsBuilder.ElementsToRemove.Clear();
+        }
+        else {
+            ConverterOptionsBuilder.ElementsToRemove = elementsToRemove.Split(Environment.NewLine).ToHashSet();
         }
     }
 
