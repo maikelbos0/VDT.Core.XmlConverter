@@ -2,3 +2,53 @@
 
 <h1>Element converter</h1>
 
+<p>
+    Nodes of type <code>XmlNodeType.Element</code> can be converted with the help of implementations of <code>IElementConverter</code>. Element converters can
+    be added to the list of converters in <code>ConverterOptions.ElementConverters</code>. By default this list is empty and the 
+    <code>ConverterOptions.DefaultElementConverter</code> will be used to convert all element nodes. Each converter in 
+    <code>ConverterOptions.ElementConverters</code> will be considered for use in order from first to last, using the <code>IElementConverter.IsValidFor</code>
+    method to determine if a converter can be used. Once found, only this converter will be used for the current element.
+</p>
+
+
+<p>
+    The below example will convert elements according to the filters and rules you select.
+</p>
+
+<div class="row">
+    <div class="col-12 mb-3">
+        <label for="input" class="form-label">Input</label>
+        <textarea class="form-control" id="input" @bind="@Input" rows="10" />
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-4 mb-3 align-self-end">
+        <button class="btn btn-primary w-100" @onclick="Convert">Convert</button>
+    </div>
+</div>
+
+@if (Output != null) {
+    <div class="row">
+        <div class="col-12 mb-3">
+            <label for="output" class="form-label">Output</label>
+            <textarea class="form-control" id="output" @bind="@Output" rows="10" />
+        </div>
+    </div>
+}
+
+@code {
+    private string? Input { get; set; } = @"<?xml version=""1.0"" encoding=""UTF-8"" ?>
+<Data>
+    <Element convert=""true"">This element will be converted.</Element>
+    <Element>This element will be converted.</Element>
+</Data>";
+    private string? Output { get; set; }
+    private Converter Converter { get; }
+
+    public ElementConverter() {
+        Converter = new();
+    }
+
+    private void Convert() {
+        Output = Converter.Convert(Input ?? "");
+    }
+}
