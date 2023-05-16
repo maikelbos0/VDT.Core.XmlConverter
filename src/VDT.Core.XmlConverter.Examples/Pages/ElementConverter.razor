@@ -10,7 +10,6 @@
     method to determine if a converter can be used. Once found, only this converter will be used for the current element.
 </p>
 
-
 <p>
     The below example will convert elements according to the filters and rules you select.
 </p>
@@ -39,16 +38,72 @@
     private string? Input { get; set; } = @"<?xml version=""1.0"" encoding=""UTF-8"" ?>
 <Data>
     <Element convert=""true"">This element will be converted.</Element>
-    <Element>This element will be converted.</Element>
+    <Element>This element will not be converted.</Element>
 </Data>";
     private string? Output { get; set; }
+    private ExampleElementConverter ExampleConverter { get; } = new() {
+        FilterElementName = true,
+        ElementName = "Element",
+        FilterAttributeName = true,
+        AttributeName = "convert",
+        NewElementName = "Value",
+        AttributesToRemove = new() {
+            "convert"
+        },
+        EnableContentRendering = true
+    };
     private Converter Converter { get; }
 
     public ElementConverter() {
-        Converter = new();
+        Converter = new(new ConverterOptions() {
+            ElementConverters = new() {
+                ExampleConverter
+            }
+        });
     }
 
     private void Convert() {
         Output = Converter.Convert(Input ?? "");
+    }
+
+    public class ExampleElementConverter : IElementConverter {
+        public bool FilterElementName { get; set; }
+        public string? ElementName { get; set; }
+        public bool FilterAttributeName { get; set; }
+        public string? AttributeName { get; set; }
+        public string? NewElementName { get; set; }
+        public HashSet<string> AttributesToRemove { get; set; } = new();
+        public bool EnableContentRendering { get; set; }
+
+        public bool IsValidFor(ElementData elementData) => true;
+
+        public void RenderStart(ElementData elementData, TextWriter writer) {
+            writer.Write("<");
+            writer.Write(elementData.Name);
+
+            foreach (var attribute in elementData.Attributes) {
+                writer.Write(" ");
+                writer.Write(attribute.Key);
+                writer.Write("=\"");
+                writer.Write(SecurityElement.Escape(attribute.Value));
+                writer.Write("\"");
+            }
+
+            if (elementData.IsSelfClosing) {
+                writer.Write("/");
+            }
+
+            writer.Write(">");
+        }
+
+        public bool ShouldRenderContent(ElementData elementData) => EnableContentRendering;
+
+        public void RenderEnd(ElementData elementData, TextWriter writer) {
+            if (!elementData.IsSelfClosing) {
+                writer.Write("</");
+                writer.Write(elementData.Name);
+                writer.Write(">");
+            }
+        }
     }
 }
