@@ -21,6 +21,17 @@
     </div>
 
     <div class="col-12 col-md-6 col-xl-4">
+        <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" id="filterElementName" checked="@PropertyConverter.FilterElementName" @onchange="() => PropertyConverter.FilterElementName = !PropertyConverter.FilterElementName" />
+            <label class="form-check-label" for="filterElementName">Filter on element name</label>
+        </div>
+
+        <div class="mb-3">
+            <label for="elementName" class="form-label">Element name</label>
+            <input type="text" class="form-control" id="elementName" @bind-value="@PropertyConverter.ElementName" />
+        </div>
+    </div>
+    
     <div class="col-12 col-md-6 col-xl-4">
         <div class="form-check mb-3">
             <input class="form-check-input" type="checkbox" id="replaceElementName" checked="@PropertyConverter.ReplaceElementName" @onchange="() => PropertyConverter.ReplaceElementName = !PropertyConverter.ReplaceElementName" />
@@ -90,7 +101,15 @@
         public HashSet<string> AttributesToRemove { get; set; } = new();
         public bool EnableContentRendering { get; set; }
 
-        public bool IsValidFor(ElementData elementData) => true;
+        public bool IsValidFor(ElementData elementData) {
+            var isValid = true;
+
+            if (FilterElementName) {
+                isValid = isValid && elementData.Name == ElementName;
+            }
+
+            return isValid;
+        }
 
         public void RenderStart(ElementData elementData, TextWriter writer) {
             writer.Write("<");
