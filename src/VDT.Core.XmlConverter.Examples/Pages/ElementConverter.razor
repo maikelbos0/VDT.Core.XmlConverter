@@ -41,7 +41,7 @@
     <Element>This element will not be converted.</Element>
 </Data>";
     private string? Output { get; set; }
-    private ExampleElementConverter ExampleConverter { get; } = new() {
+    private ElementPropertyConverter PropertyConverter { get; } = new() {
         FilterElementName = true,
         ElementName = "Element",
         FilterAttributeName = true,
@@ -57,7 +57,7 @@
     public ElementConverter() {
         Converter = new(new ConverterOptions() {
             ElementConverters = new() {
-                ExampleConverter
+                PropertyConverter
             }
         });
     }
@@ -66,7 +66,7 @@
         Output = Converter.Convert(Input ?? "");
     }
 
-    public class ExampleElementConverter : IElementConverter {
+    public class ElementPropertyConverter : IElementConverter {
         public bool FilterElementName { get; set; }
         public string? ElementName { get; set; }
         public bool FilterAttributeName { get; set; }
