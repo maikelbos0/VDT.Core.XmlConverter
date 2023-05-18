@@ -20,6 +20,19 @@
         <textarea class="form-control" id="input" @bind="@Input" rows="10" />
     </div>
 
+    <div class="col-12 col-md-6 col-xl-4">
+    <div class="col-12 col-md-6 col-xl-4">
+        <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" id="replaceElementName" checked="@PropertyConverter.ReplaceElementName" @onchange="() => PropertyConverter.ReplaceElementName = !PropertyConverter.ReplaceElementName" />
+            <label class="form-check-label" for="replaceElementName">Replace element name</label>
+        </div>
+
+        <div class="mb-3">
+            <label for="newElementName" class="form-label">New element name</label>
+            <input type="text" class="form-control" id="newElementName" @bind-value="@PropertyConverter.NewElementName" />
+        </div>
+    </div>
+
     <div class="col-12 col-md-6 col-xl-4 mb-3 align-self-end">
         <button class="btn btn-primary w-100" @onclick="Convert">Convert</button>
     </div>
@@ -46,6 +59,7 @@
         ElementName = "Element",
         FilterAttributeName = true,
         AttributeName = "convert",
+        ReplaceElementName = true,
         NewElementName = "Value",
         AttributesToRemove = new() {
             "convert"
@@ -71,6 +85,7 @@
         public string? ElementName { get; set; }
         public bool FilterAttributeName { get; set; }
         public string? AttributeName { get; set; }
+        public bool ReplaceElementName { get; set; }
         public string? NewElementName { get; set; }
         public HashSet<string> AttributesToRemove { get; set; } = new();
         public bool EnableContentRendering { get; set; }
@@ -79,7 +94,7 @@
 
         public void RenderStart(ElementData elementData, TextWriter writer) {
             writer.Write("<");
-            writer.Write(elementData.Name);
+            writer.Write(GetElementName(elementData));
 
             foreach (var attribute in elementData.Attributes) {
                 writer.Write(" ");
@@ -101,9 +116,11 @@
         public void RenderEnd(ElementData elementData, TextWriter writer) {
             if (!elementData.IsSelfClosing) {
                 writer.Write("</");
-                writer.Write(elementData.Name);
+                writer.Write(GetElementName(elementData));
                 writer.Write(">");
             }
         }
+
+        private string GetElementName(ElementData elementData) => ReplaceElementName ? NewElementName ?? elementData.Name : elementData.Name;
     }
 }
