@@ -44,6 +44,11 @@
         </div>
     </div>
 
+    <div class="col-12 col-md-6 col-xl-4 mb-3">
+        <label for="attributesToRemove" class="form-label">Attributes to remove</label>
+        <textarea class="form-control" id="attributesToRemove" rows="5" @onchange="SetAttributesToRemove">@string.Join(Environment.NewLine, PropertyConverter.AttributesToRemove)</textarea>
+    </div>
+
     <div class="col-12 col-md-6 col-xl-4 mb-3 align-self-end">
         <button class="btn btn-primary w-100" @onclick="Convert">Convert</button>
     </div>
@@ -78,6 +83,17 @@
         EnableContentRendering = true
     };
     private Converter Converter { get; }
+
+    private void SetAttributesToRemove(ChangeEventArgs args) {
+        var attributesToRemove = args.Value?.ToString();
+
+        if (attributesToRemove == null) {
+            PropertyConverter.AttributesToRemove.Clear();
+        }
+        else {
+            PropertyConverter.AttributesToRemove = attributesToRemove.Split(Environment.NewLine).ToHashSet();
+        }
+    }
 
     public ElementConverter() {
         Converter = new(new ConverterOptions() {
@@ -115,7 +131,7 @@
             writer.Write("<");
             writer.Write(GetElementName(elementData));
 
-            foreach (var attribute in elementData.Attributes) {
+            foreach (var attribute in elementData.Attributes.Where(attribute => !AttributesToRemove.Contains(attribute.Key))) {
                 writer.Write(" ");
                 writer.Write(attribute.Key);
                 writer.Write("=\"");
