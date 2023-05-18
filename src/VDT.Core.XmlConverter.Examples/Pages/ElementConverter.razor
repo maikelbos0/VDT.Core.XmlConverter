@@ -4,8 +4,8 @@
 
 <p>
     Nodes of type <code>XmlNodeType.Element</code> can be converted with the help of implementations of <code>IElementConverter</code>. Element converters can
-    be added to the list of converters in <code>ConverterOptions.ElementConverters</code>. By default this list is empty and the 
-    <code>ConverterOptions.DefaultElementConverter</code> will be used to convert all element nodes. Each converter in 
+    be added to the list of converters in <code>ConverterOptions.ElementConverters</code>. By default this list is empty and the
+    <code>ConverterOptions.DefaultElementConverter</code> will be used to convert all element nodes. Each converter in
     <code>ConverterOptions.ElementConverters</code> will be considered for use in order from first to last, using the <code>IElementConverter.IsValidFor</code>
     method to determine if a converter can be used. Once found, only this converter will be used for the current element.
 </p>
@@ -31,7 +31,19 @@
             <input type="text" class="form-control" id="elementName" @bind-value="@PropertyConverter.ElementName" />
         </div>
     </div>
-    
+
+    <div class="col-12 col-md-6 col-xl-4">
+        <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" id="filterAttributeName" checked="@PropertyConverter.FilterAttributeName" @onchange="() => PropertyConverter.FilterAttributeName = !PropertyConverter.FilterAttributeName" />
+            <label class="form-check-label" for="filterAttributeName">Filter on attribute name</label>
+        </div>
+
+        <div class="mb-3">
+            <label for="AttributeName" class="form-label">Attribute name</label>
+            <input type="text" class="form-control" id="AttributeName" @bind-value="@PropertyConverter.AttributeName" />
+        </div>
+    </div>
+
     <div class="col-12 col-md-6 col-xl-4">
         <div class="form-check mb-3">
             <input class="form-check-input" type="checkbox" id="replaceElementName" checked="@PropertyConverter.ReplaceElementName" @onchange="() => PropertyConverter.ReplaceElementName = !PropertyConverter.ReplaceElementName" />
@@ -122,6 +134,10 @@
 
             if (FilterElementName) {
                 isValid = isValid && elementData.Name == ElementName;
+            }
+
+            if (FilterAttributeName) {
+                isValid = isValid && elementData.Attributes.ContainsKey(AttributeName ?? "");
             }
 
             return isValid;
