@@ -12,7 +12,7 @@ namespace VDT.Core.XmlConverter.Markdown {
         /// </summary>
         /// <param name="nodeData">Node data to which the tracker belongs</param>
         /// <returns>Content tracker for the node data</returns>
-        public static ContentTracker GetContentTracker(this INodeData nodeData) {            
+        public static ContentTracker GetContentTracker(this INodeData nodeData) {
             return new ContentTracker(nodeData);
         }
 
