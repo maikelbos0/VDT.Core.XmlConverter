@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VDT.Core.XmlConverter", "VD
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VDT.Core.XmlConverter.Tests", "VDT.Core.XmlConverter.Tests\VDT.Core.XmlConverter.Tests.csproj", "{9C107B03-9EA4-4601-9A2D-6528F6946257}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VDT.Core.XmlConverter.Examples", "VDT.Core.XmlConverter.Examples\VDT.Core.XmlConverter.Examples.csproj", "{2ED8A19C-9508-4E2B-83C4-98CE0DB003CA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{9C107B03-9EA4-4601-9A2D-6528F6946257}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9C107B03-9EA4-4601-9A2D-6528F6946257}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9C107B03-9EA4-4601-9A2D-6528F6946257}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2ED8A19C-9508-4E2B-83C4-98CE0DB003CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2ED8A19C-9508-4E2B-83C4-98CE0DB003CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2ED8A19C-9508-4E2B-83C4-98CE0DB003CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2ED8A19C-9508-4E2B-83C4-98CE0DB003CA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

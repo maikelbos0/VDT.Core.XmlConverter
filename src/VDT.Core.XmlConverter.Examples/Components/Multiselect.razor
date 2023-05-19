@@ -1,0 +1,71 @@
+﻿@typeparam TItem
+
+<GlobalEventHandler OnClick="TryClose" />
+
+<div class="position-relative" @onclick="PreventClosing">
+    <div class="form-multiselect-header" @onclick="Toggle" @onkeydown="ToggleIfNeeded" tabindex="0">
+        @Header
+    </div>
+
+    @if (IsOpen) {
+        <div class="form-multiselect-items">
+            @foreach (var item in Items) {
+                var itemId = $"multiselect-item-{Guid.NewGuid()}";
+
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="@itemId" checked="@SelectedItems.Contains(item.Key)" @onchange="() => OnItemSelectedChange(item.Key)" />
+                    <label class="form-check-label" for="@itemId">@item.Description</label>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    private bool ShouldPreventClosing { get; set; } = false;
+    private bool IsOpen { get; set; } = false;
+    private string Header => string.Join(", ", Items.Where(item => SelectedItems.Contains(item.Key)).Select(item => item.Description).DefaultIfEmpty("(none selected)"));
+
+    [Parameter]
+    public HashSet<TItem> SelectedItems { get; set; } = new();
+
+    [Parameter]
+    public EventCallback<HashSet<TItem>> SelectedItemsChanged { get; set; }
+
+    [EditorRequired]
+    [Parameter]
+    public List<(TItem Key, string Description)> Items { get; set; } = new();
+
+    private async Task OnItemSelectedChange(TItem item) {
+        if (SelectedItems.Contains(item)) {
+            SelectedItems.Remove(item);
+        }
+        else {
+            SelectedItems.Add(item);
+        }
+
+        await SelectedItemsChanged.InvokeAsync(SelectedItems);
+    }
+
+    private void Toggle() {
+        IsOpen = !IsOpen;
+    }
+
+    private void ToggleIfNeeded(KeyboardEventArgs args) {
+        if ("ENTER".Equals(args.Key, StringComparison.InvariantCultureIgnoreCase) || " ".Equals(args.Key, StringComparison.InvariantCultureIgnoreCase)) {
+            Toggle();
+        }
+    }
+
+    private void PreventClosing() {
+        ShouldPreventClosing = true;
+    }
+
+    private void TryClose() {
+        if (!ShouldPreventClosing) {
+            IsOpen = false;
+        }
+
+        ShouldPreventClosing = false;
+    }
+}

@@ -1,0 +1,182 @@
+﻿@page "/ElementConverter"
+
+<h1>Element converter</h1>
+
+<p>
+    Nodes of type <code>XmlNodeType.Element</code> can be converted with the help of implementations of <code>IElementConverter</code>. Element converters can
+    be added to the list of converters in <code>ConverterOptions.ElementConverters</code>. By default this list is empty and the
+    <code>ConverterOptions.DefaultElementConverter</code> will be used to convert all element nodes. Each converter in
+    <code>ConverterOptions.ElementConverters</code> will be considered for use in order from first to last, using the <code>IElementConverter.IsValidFor</code>
+    method to determine if a converter can be used. Once found, only this converter will be used for the current element.
+</p>
+
+<p>
+    The below example will convert elements according to the filters and rules you select.
+</p>
+
+<div class="row">
+    <div class="col-12 mb-3">
+        <label for="input" class="form-label">Input</label>
+        <textarea class="form-control" id="input" @bind="@Input" rows="10" />
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-4">
+        <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" id="filterElementName" checked="@ExampleConverter.FilterElementName" @onchange="() => ExampleConverter.FilterElementName = !ExampleConverter.FilterElementName" />
+            <label class="form-check-label" for="filterElementName">Filter on element name</label>
+        </div>
+
+        <div class="mb-3">
+            <label for="validElementName" class="form-label">Element name</label>
+            <input type="text" class="form-control" id="validElementName" @bind-value="@ExampleConverter.ValidElementName" />
+        </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-4">
+        <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" id="filterAttributeName" checked="@ExampleConverter.FilterAttributeName" @onchange="() => ExampleConverter.FilterAttributeName = !ExampleConverter.FilterAttributeName" />
+            <label class="form-check-label" for="filterAttributeName">Filter on attribute name</label>
+        </div>
+
+        <div class="mb-3">
+            <label for="validAttributeName" class="form-label">Attribute name</label>
+            <input type="text" class="form-control" id="validAttributeName" @bind-value="@ExampleConverter.ValidAttributeName" />
+        </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-4">
+        <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" id="replaceElementName" checked="@ExampleConverter.ReplaceElementName" @onchange="() => ExampleConverter.ReplaceElementName = !ExampleConverter.ReplaceElementName" />
+            <label class="form-check-label" for="replaceElementName">Replace element name</label>
+        </div>
+
+        <div class="mb-3">
+            <label for="newElementName" class="form-label">New element name</label>
+            <input type="text" class="form-control" id="newElementName" @bind-value="@ExampleConverter.NewElementName" />
+        </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-4 mb-3">
+        <label for="attributesToRemove" class="form-label">Attributes to remove</label>
+        <textarea class="form-control" id="attributesToRemove" rows="5" @onchange="SetAttributesToRemove">@string.Join(Environment.NewLine, ExampleConverter.AttributesToRemove)</textarea>
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-4">
+        <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" id="renderContent" checked="@ExampleConverter.RenderContent" @onchange="() => ExampleConverter.RenderContent = !ExampleConverter.RenderContent" />
+            <label class="form-check-label" for="renderContent">Render element content</label>
+        </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-4 mb-3 align-self-end">
+        <button class="btn btn-primary w-100" @onclick="Convert">Convert</button>
+    </div>
+
+    @if (Output != null) {
+        <div class="col-12 mb-3">
+            <label for="output" class="form-label">Output</label>
+            <textarea class="form-control" id="output" @bind="@Output" rows="10" />
+        </div>
+    }
+</div>
+
+@code {
+    private string? Input { get; set; } = @"<?xml version=""1.0"" encoding=""UTF-8"" ?>
+<Data>
+    <Element convert=""true"">This element will be converted.</Element>
+    <Element>This element will not be converted.</Element>
+</Data>";
+    private string? Output { get; set; }
+    private ElementPropertyConverter ExampleConverter { get; } = new() {
+        FilterElementName = true,
+        ValidElementName = "Element",
+        FilterAttributeName = true,
+        ValidAttributeName = "convert",
+        ReplaceElementName = true,
+        NewElementName = "Value",
+        AttributesToRemove = new() {
+            "convert"
+        },
+        RenderContent = true
+    };
+    private Converter Converter { get; }
+
+    public ElementConverter() {
+        Converter = new(new ConverterOptions() {
+            ElementConverters = new() {
+                ExampleConverter
+            }
+        });
+    }
+
+    private void SetAttributesToRemove(ChangeEventArgs args) {
+        var attributesToRemove = args.Value?.ToString();
+
+        if (attributesToRemove == null) {
+            ExampleConverter.AttributesToRemove.Clear();
+        }
+        else {
+            ExampleConverter.AttributesToRemove = attributesToRemove.Split(Environment.NewLine).ToHashSet();
+        }
+    }
+
+    private void Convert() {
+        Output = Converter.Convert(Input ?? "");
+    }
+
+    public class ElementPropertyConverter : IElementConverter {
+        public bool FilterElementName { get; set; }
+        public string? ValidElementName { get; set; }
+        public bool FilterAttributeName { get; set; }
+        public string? ValidAttributeName { get; set; }
+        public bool ReplaceElementName { get; set; }
+        public string? NewElementName { get; set; }
+        public HashSet<string> AttributesToRemove { get; set; } = new();
+        public bool RenderContent { get; set; }
+
+        public bool IsValidFor(ElementData elementData) {
+            var isValid = true;
+
+            if (FilterElementName) {
+                isValid = isValid && elementData.Name == ValidElementName;
+            }
+
+            if (FilterAttributeName) {
+                isValid = isValid && elementData.Attributes.ContainsKey(ValidAttributeName ?? "");
+            }
+
+            return isValid;
+        }
+
+        public void RenderStart(ElementData elementData, TextWriter writer) {
+            writer.Write("<");
+            writer.Write(GetElementName(elementData));
+
+            foreach (var attribute in elementData.Attributes.Where(attribute => !AttributesToRemove.Contains(attribute.Key))) {
+                writer.Write(" ");
+                writer.Write(attribute.Key);
+                writer.Write("=\"");
+                writer.Write(SecurityElement.Escape(attribute.Value));
+                writer.Write("\"");
+            }
+
+            if (elementData.IsSelfClosing) {
+                writer.Write("/");
+            }
+
+            writer.Write(">");
+        }
+
+        public bool ShouldRenderContent(ElementData elementData) => RenderContent;
+
+        public void RenderEnd(ElementData elementData, TextWriter writer) {
+            if (!elementData.IsSelfClosing) {
+                writer.Write("</");
+                writer.Write(GetElementName(elementData));
+                writer.Write(">");
+            }
+        }
+
+        private string GetElementName(ElementData elementData) => ReplaceElementName ? NewElementName ?? elementData.Name : elementData.Name;
+    }
+}

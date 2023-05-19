@@ -1,0 +1,124 @@
+﻿@page "/Markdown"
+
+<h1>Markdown</h1>
+
+<p>
+    Methods to convert HTML to Markdown can be found in the <code>VDT.Core.XmlConverter.Markdown</code> namespace. Only converting HTML that is also valid XML
+    is supported, so if your documents are not well-formed XML an additional conversion is required first.
+</p>
+
+<p>
+    The below example will use the <code>ConverterOptionsBuilder</code> class to create a converter with customizable converter options. This converter will
+    then transform the HTML input to Markdown output.
+</p>
+
+<div class="row">
+    <div class="col-12 mb-3">
+        <label for="input" class="form-label">Input</label>
+        <textarea class="form-control" id="input" @bind="@Input" rows="10" />
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-4 mb-3 align-self-end">
+        <label class="form-label">Target elements</label>
+        <Multiselect Items="AllElementConverterTargets" @bind-SelectedItems="ConverterOptionsBuilder.ElementConverterTargets" />
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-4 mb-3">
+        <label for="preConversionMode" class="form-label">Pre conversion mode</label>
+        <select class="form-select" id="preConversionMode" @onchange="args => ConverterOptionsBuilder.PreConversionMode = Enum.Parse<PreConversionMode>(args.Value!.ToString()!)">
+            @foreach (var preConversionMode in Enum.GetValues<PreConversionMode>()) {
+                <option value="@preConversionMode" selected="@(ConverterOptionsBuilder.PreConversionMode == preConversionMode)">@preConversionMode</option>
+            }
+        </select>
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-4 mb-3">
+        <label for="unknownElementHandlingMode" class="form-label">Unknown element handling mode</label>
+        <select class="form-select" id="unknownElementHandlingMode" @onchange="args => ConverterOptionsBuilder.UnknownElementHandlingMode = Enum.Parse<UnknownElementHandlingMode>(args.Value!.ToString()!)">
+            @foreach (var unknownElementHandlingMode in Enum.GetValues<UnknownElementHandlingMode>()) {
+                <option value="@unknownElementHandlingMode" selected="@(ConverterOptionsBuilder.UnknownElementHandlingMode == unknownElementHandlingMode)">@unknownElementHandlingMode</option>
+            }
+        </select>
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-4 mb-3">
+        <label for="tagsToRemove" class="form-label">Tags to remove</label>
+        <textarea class="form-control" id="tagsToRemove" rows="5" @onchange="SetTagsToRemove">@string.Join(Environment.NewLine, ConverterOptionsBuilder.TagsToRemove)</textarea>
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-4 mb-3">
+        <label for="elementsToRemove" class="form-label">Elements to remove</label>
+        <textarea class="form-control" id="elementsToRemove" rows="5" @onchange="SetElementsToRemove">@string.Join(Environment.NewLine, ConverterOptionsBuilder.ElementsToRemove)</textarea>
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-4 mb-3 align-self-end">
+        <button class="btn btn-primary w-100" @onclick="Convert">Convert</button>
+    </div>
+    
+    @if (Output != null) {
+        <div class="col-12 mb-3">
+            <label for="output" class="form-label">Output</label>
+            <textarea class="form-control" id="output" @bind="@Output" rows="10" />
+        </div>
+    }
+</div>
+
+@code {
+    private string? Input { get; set; } = @"<html>
+    <head>
+        <title>Example html page</title>
+    </head>
+    <body>
+        <h1>This is an example header</h1>
+        <p>
+            This paragraph could be used to explain what's going on, but instead it's just talking about itself in the third person. It enjoys being converted
+            to Markdown, and should be perfectly readable after conversion as well.
+        </p>
+        <pre>Here's a code block.</pre>
+        <ul>
+            <li>I'm in a list!</li>
+            <li>I'm also in it, and I could be <strong>bold</strong> and contain a <a href=""https://google.com"">hyperlink</a></li>
+            <li>
+                Now let's do something a bit more funky:
+                <ol>
+                    <li>I'm a list inside a list!</li>
+                    <li>It's crazy!</li>
+                </ol>
+            </li>
+        </ul>
+    </body>
+</html>";
+    private List<(ElementConverterTarget, string)> AllElementConverterTargets { get; } = Enum.GetValues<ElementConverterTarget>()
+        .Select(elementConverterTarget => (elementConverterTarget, Regex.Replace(elementConverterTarget.ToString(), @"(?<!^)([A-Z])", m => $" {m.Value.ToLower()}")))
+        .ToList();
+    private ConverterOptionsBuilder ConverterOptionsBuilder = new();
+    private string? Output { get; set; }
+
+    private void SetTagsToRemove(ChangeEventArgs args) {
+        var tagsToRemove = args.Value?.ToString();
+
+        if (tagsToRemove == null) {
+            ConverterOptionsBuilder.TagsToRemove.Clear();
+        }
+        else {
+            ConverterOptionsBuilder.TagsToRemove = tagsToRemove.Split(Environment.NewLine).ToHashSet();
+        }
+    }
+
+    private void SetElementsToRemove(ChangeEventArgs args) {
+        var elementsToRemove = args.Value?.ToString();
+
+        if (elementsToRemove == null) {
+            ConverterOptionsBuilder.ElementsToRemove.Clear();
+        }
+        else {
+            ConverterOptionsBuilder.ElementsToRemove = elementsToRemove.Split(Environment.NewLine).ToHashSet();
+        }
+    }
+
+    private void Convert() {
+        var converter = new Converter(ConverterOptionsBuilder.Build());
+
+        Output = converter.Convert(Input ?? "");
+    }
+}
