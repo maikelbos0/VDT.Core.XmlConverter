@@ -3,9 +3,9 @@
 <h1>Node converter</h1>
 
 <p>
-    Any node type (except for <code>XmlNodeType.Element</code> which has more detailed options, see below) that is supported by <code>XmlReader</code> can be
-    converted by implementing the <code>INodeConverter</code> interface and assigning this custom implementation to the correct node type in the
-    <code>ConverterOptions</code> that are passed to the converter.
+    Any node type (except for <code>XmlNodeType.Element</code> which has more detailed options, see <a href="ElementConverter">Element converter</a>) that is 
+    supported by <code>XmlReader</code> can be converted by implementing the <code>INodeConverter</code> interface and assigning this custom implementation to
+    the correct node type in the <code>ConverterOptions</code> that are passed to the converter.
 </p>
 
 <p>
@@ -20,41 +20,39 @@
 
     <div class="col-12 col-md-6 col-xl-4">
         <div class="form-check mb-3">
-            <input class="form-check-input" type="checkbox" id="filterParentElementName" checked="@CommentConverter.FilterParentElementName" @onchange="() => CommentConverter.FilterParentElementName = !CommentConverter.FilterParentElementName" />
+            <input class="form-check-input" type="checkbox" id="filterParentElementName" checked="@ExampleConverter.FilterParentElementName" @onchange="() => ExampleConverter.FilterParentElementName = !ExampleConverter.FilterParentElementName" />
             <label class="form-check-label" for="filterParentElementName">Filter on parent element name</label>
         </div>
 
         <div class="mb-3">
-            <label for="parentElementName" class="form-label">Parent element name</label>
-            <input type="text" class="form-control" id="parentElementName" @bind-value="@CommentConverter.ParentElementName" />
+            <label for="validParentElementName" class="form-label">Parent element name</label>
+            <input type="text" class="form-control" id="validParentElementName" @bind-value="@ExampleConverter.ValidParentElementName" />
         </div>
     </div>
 
     <div class="col-12 col-md-6 col-xl-4">
         <div class="form-check mb-3">
-            <input class="form-check-input" type="checkbox" id="filterParentAttributeName" checked="@CommentConverter.FilterParentAttributeName" @onchange="() => CommentConverter.FilterParentAttributeName = !CommentConverter.FilterParentAttributeName" />
+            <input class="form-check-input" type="checkbox" id="filterParentAttributeName" checked="@ExampleConverter.FilterParentAttributeName" @onchange="() => ExampleConverter.FilterParentAttributeName = !ExampleConverter.FilterParentAttributeName" />
             <label class="form-check-label" for="filterParentAttributeName">Filter on parent attribute name</label>
         </div>
 
         <div class="mb-3">
-            <label for="parentAttributeName" class="form-label">Parent attribute name</label>
-            <input type="text" class="form-control" id="parentAttributeName" @bind-value="@CommentConverter.ParentAttributeName" />
+            <label for="validParentAttributeName" class="form-label">Parent attribute name</label>
+            <input type="text" class="form-control" id="validParentAttributeName" @bind-value="@ExampleConverter.ValidParentAttributeName" />
         </div>
     </div>
 
     <div class="col-12 col-md-6 col-xl-4 mb-3 align-self-end">
         <button class="btn btn-primary w-100" @onclick="Convert">Convert</button>
     </div>
-</div>
 
-@if (Output != null) {
-    <div class="row">
+    @if (Output != null) {
         <div class="col-12 mb-3">
             <label for="output" class="form-label">Output</label>
             <textarea class="form-control" id="output" @bind="@Output" rows="10" />
         </div>
-    </div>
-}
+    }
+</div>
 
 @code {
     private string? Input { get; set; } = @"<Data>
@@ -62,16 +60,16 @@
     <CommentData convert=""true""><!-- This comment will be turned into a text node --></CommentData>
 </Data>";
     private string? Output { get; set; }
-    private CommentToElementConverter CommentConverter { get; } = new() {
+    private CommentToElementConverter ExampleConverter { get; } = new() {
         FilterParentElementName = true,
-        ParentElementName = "CommentData",
+        ValidParentElementName = "CommentData",
         FilterParentAttributeName = true,
-        ParentAttributeName = "convert"
+        ValidParentAttributeName = "convert"
     };
     private Converter Converter { get; }
 
     public NodeConverter() {
-        Converter = new(new ConverterOptions() { CommentConverter = CommentConverter });
+        Converter = new(new ConverterOptions() { CommentConverter = ExampleConverter });
     }
 
     private void Convert() {
@@ -80,19 +78,19 @@
 
     class CommentToElementConverter : INodeConverter {
         public bool FilterParentElementName { get; set; }
-        public string? ParentElementName { get; set; }
+        public string? ValidParentElementName { get; set; }
         public bool FilterParentAttributeName { get; set; }
-        public string? ParentAttributeName { get; set; }
+        public string? ValidParentAttributeName { get; set; }
 
         public void Convert(TextWriter writer, NodeData data) {
             var shouldConvert = true;
 
             if (FilterParentElementName) {
-                shouldConvert = shouldConvert && data.Ancestors.FirstOrDefault()?.Name == ParentElementName;
+                shouldConvert = shouldConvert && data.Ancestors.FirstOrDefault()?.Name == ValidParentElementName;
             }
 
             if (FilterParentAttributeName) {
-                shouldConvert = shouldConvert && (data.Ancestors.FirstOrDefault()?.Attributes.ContainsKey(ParentAttributeName ?? "") ?? false);
+                shouldConvert = shouldConvert && (data.Ancestors.FirstOrDefault()?.Attributes.ContainsKey(ValidParentAttributeName ?? "") ?? false);
             }
 
             if (shouldConvert) {

@@ -54,16 +54,14 @@
     <div class="col-12 col-md-6 col-xl-4 mb-3 align-self-end">
         <button class="btn btn-primary w-100" @onclick="Convert">Convert</button>
     </div>
-</div>
-
-@if (Output != null) {
-    <div class="row">
+    
+    @if (Output != null) {
         <div class="col-12 mb-3">
             <label for="output" class="form-label">Output</label>
             <textarea class="form-control" id="output" @bind="@Output" rows="10" />
         </div>
-    </div>
-}
+    }
+</div>
 
 @code {
     private string? Input { get; set; } = @"<html>
