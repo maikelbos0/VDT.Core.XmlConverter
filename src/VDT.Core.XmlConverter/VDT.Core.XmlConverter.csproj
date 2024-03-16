@@ -9,13 +9,12 @@
 
 	<PropertyGroup>
 		<PackageId>VDT.Core.XmlConverter</PackageId>
-		<Version>3.0.0</Version>
+		<Version>4.0.0</Version>
 		<Title>VDT.Core.XmlConverter</Title>
 		<PackageIcon>icon_128.png</PackageIcon>
 		<Description>Converter for changing XML documents to other formats such as Markdown</Description>
-		<PackageReleaseNotes>- Switched from .net standard 2.1 to 2.0 to support full framework
-- Removed explicit .net core 3.1 and .net 5.0 support
-- Added explicit .net 7.0 support</PackageReleaseNotes>
+		<PackageReleaseNotes>- Removed explicit .net 7.0 support
+- Added explicit .net 8.0 support</PackageReleaseNotes>
 		<Authors>Maikel Bos</Authors>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<Copyright>Copyright © 2022 Maikel Bos</Copyright>
