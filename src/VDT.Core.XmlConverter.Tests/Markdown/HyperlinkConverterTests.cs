@@ -30,7 +30,7 @@ namespace VDT.Core.XmlConverter.Tests.Markdown {
         [InlineData(null, null, "]()")]
         [InlineData("https://www.google.com", null, "](https://www.google.com)")]
         [InlineData("https://www.google.com", "Google.com", "](https://www.google.com \"Google.com\")")]
-        public void RenderEnd(string href, string title, string expectedOutput) {
+        public void RenderEnd(string? href, string? title, string expectedOutput) {
             using var writer = new StringWriter();
 
             var converter = new HyperlinkConverter();
