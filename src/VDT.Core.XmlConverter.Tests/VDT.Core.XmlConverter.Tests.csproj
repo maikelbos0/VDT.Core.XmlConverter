@@ -25,7 +25,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Update="Markdown\*.*">
+		<None Update="Files\**\*.*">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>

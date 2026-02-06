@@ -70,5 +70,5 @@ public class ConverterTests {
         Assert.Equal(ReadFile(expectedMarkdownFile), result);
     }
 
-    private static string ReadFile(string fileName) => File.ReadAllText(Path.Combine("Markdown", fileName));
+    private static string ReadFile(string fileName) => File.ReadAllText(Path.Combine("Files", "Markdown", fileName));
 }
