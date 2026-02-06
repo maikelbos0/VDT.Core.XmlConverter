@@ -169,7 +169,7 @@ public class ConversionDataTests {
         Assert.Equal(ancestor, Assert.Single(data.Ancestors));
     }
 
-    private ElementData ReadNextElement(XmlReader reader, ConversionData data) {
+    private static ElementData ReadNextElement(XmlReader reader, ConversionData data) {
         reader.Read();
 
         while (reader.NodeType == XmlNodeType.EndElement) {

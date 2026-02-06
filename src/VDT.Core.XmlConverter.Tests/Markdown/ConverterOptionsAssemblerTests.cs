@@ -11,7 +11,7 @@ public class ConverterOptionsAssemblerTests {
         var options = new ConverterOptions();
         var assembler = new ConverterOptionsAssembler();
 
-        assembler.SetTextConverter(options, CharacterEscapeMode.ElementConverterBased, new HashSet<ElementConverterTarget>(), new Dictionary<char, string>());
+        assembler.SetTextConverter(options, CharacterEscapeMode.ElementConverterBased, [], []);
 
         Assert.IsType<TextConverter>(options.TextConverter);
     }
@@ -25,7 +25,7 @@ public class ConverterOptionsAssemblerTests {
             { '?', "\\?" }
         };
 
-        assembler.SetTextConverter(options, CharacterEscapeMode.Full, new HashSet<ElementConverterTarget>(), customCharacterEscapes);
+        assembler.SetTextConverter(options, CharacterEscapeMode.Full, [], customCharacterEscapes);
 
         var textConverter = Assert.IsType<TextConverter>(options.TextConverter);
 
@@ -81,13 +81,12 @@ public class ConverterOptionsAssemblerTests {
             { '>', ">" },
             { '?', "\\?" }
         };
-        var expectedEscapedCharacters = new HashSet<char>(expectedCharacters.Concat(new[] { '<', '>', '&', '?' }));
 
-        assembler.SetTextConverter(options, CharacterEscapeMode.ElementConverterBased, new HashSet<ElementConverterTarget>() { elementConverterTarget }, customCharacterEscapes);
+        assembler.SetTextConverter(options, CharacterEscapeMode.ElementConverterBased, [elementConverterTarget], customCharacterEscapes);
 
         var textConverter = Assert.IsType<TextConverter>(options.TextConverter);
 
-        Assert.Equal(expectedEscapedCharacters, textConverter.CharacterEscapes.Keys.ToHashSet());
+        Assert.Equal([.. expectedCharacters, '<', '>', '&', '?'], textConverter.CharacterEscapes.Keys.ToHashSet());
         Assert.Equal(">", textConverter.CharacterEscapes['>']);
     }
 
@@ -100,11 +99,11 @@ public class ConverterOptionsAssemblerTests {
             ElementConverterTarget.HorizontalRule
         };
 
-        assembler.SetTextConverter(options, CharacterEscapeMode.ElementConverterBased, targets, new Dictionary<char, string>());
+        assembler.SetTextConverter(options, CharacterEscapeMode.ElementConverterBased, targets, []);
 
         var textConverter = Assert.IsType<TextConverter>(options.TextConverter);
 
-        Assert.Equal(new HashSet<char>() { '<', '>', '&', '\\', '*', '+', '-', '.' }, textConverter.CharacterEscapes.Keys.ToHashSet());
+        Assert.Equal(['<', '>', '&', '\\', '*', '+', '-', '.'], textConverter.CharacterEscapes.Keys.ToHashSet());
     }
 
     [Fact]
@@ -116,7 +115,7 @@ public class ConverterOptionsAssemblerTests {
             { '?', "\\?" }
         };
 
-        assembler.SetTextConverter(options, CharacterEscapeMode.Custom, new HashSet<ElementConverterTarget>(), customCharacterEscapes);
+        assembler.SetTextConverter(options, CharacterEscapeMode.Custom, [], customCharacterEscapes);
 
         var textConverter = Assert.IsType<TextConverter>(options.TextConverter);
 
@@ -136,7 +135,7 @@ public class ConverterOptionsAssemblerTests {
             { '?', "\\?" }
         };
 
-        assembler.SetTextConverter(options, CharacterEscapeMode.CustomOnly, new HashSet<ElementConverterTarget>(), customCharacterEscapes);
+        assembler.SetTextConverter(options, CharacterEscapeMode.CustomOnly, [], customCharacterEscapes);
 
         var textConverter = Assert.IsType<TextConverter>(options.TextConverter);
 
@@ -278,7 +277,7 @@ public class ConverterOptionsAssemblerTests {
 
         assembler.AddListItemConverters(options);
 
-        Assert.Single(options.ElementConverters, converter => converter is ListConverter listConverter && listConverter.ValidForElementNames.SequenceEqual(new[] { "ul", "ol", "menu" }));
+        Assert.Single(options.ElementConverters, converter => converter is ListConverter listConverter && listConverter.ValidForElementNames.SequenceEqual(["ul", "ol", "menu"]));
     }
 
     [Fact]
@@ -448,7 +447,7 @@ public class ConverterOptionsAssemblerTests {
 
         assembler.AddDefinitionListConverters(options);
 
-        Assert.Single(options.ElementConverters, converter => converter is ListConverter listConverter && listConverter.ValidForElementNames.SequenceEqual(new[] { "dl" }));
+        Assert.Single(options.ElementConverters, converter => converter is ListConverter listConverter && listConverter.ValidForElementNames.SequenceEqual(["dl"]));
     }
 
     [Fact]
@@ -456,9 +455,9 @@ public class ConverterOptionsAssemblerTests {
         var options = new ConverterOptions();
         var assembler = new ConverterOptionsAssembler();
 
-        assembler.AddTagRemovingElementConverter(options, new HashSet<string>() { "html", "body", "ul", "ol", "menu", "div", "span" });
+        assembler.AddTagRemovingElementConverter(options, ["html", "body", "ul", "ol", "menu", "div", "span"]);
 
-        Assert.Equal(new[] { "html", "body", "ul", "ol", "menu", "div", "span" }, Assert.IsType<TagRemovingElementConverter>(Assert.Single(options.ElementConverters)).ValidForElementNames);
+        Assert.Equal(["html", "body", "ul", "ol", "menu", "div", "span"], Assert.IsType<TagRemovingElementConverter>(Assert.Single(options.ElementConverters)).ValidForElementNames);
     }
 
     [Fact]
@@ -466,7 +465,7 @@ public class ConverterOptionsAssemblerTests {
         var options = new ConverterOptions();
         var assembler = new ConverterOptionsAssembler();
 
-        assembler.AddTagRemovingElementConverter(options, new HashSet<string>());
+        assembler.AddTagRemovingElementConverter(options, []);
 
         Assert.Empty(options.ElementConverters);
     }
@@ -476,9 +475,9 @@ public class ConverterOptionsAssemblerTests {
         var options = new ConverterOptions();
         var assembler = new ConverterOptionsAssembler();
 
-        assembler.AddElementRemovingConverter(options, new HashSet<string>() { "script", "style", "head", "frame", "meta", "iframe", "frameset" });
+        assembler.AddElementRemovingConverter(options, ["script", "style", "head", "frame", "meta", "iframe", "frameset"]);
 
-        Assert.Equal(new[] { "script", "style", "head", "frame", "meta", "iframe", "frameset" }, Assert.IsType<ElementRemovingConverter>(Assert.Single(options.ElementConverters)).ValidForElementNames);
+        Assert.Equal(["script", "style", "head", "frame", "meta", "iframe", "frameset"], Assert.IsType<ElementRemovingConverter>(Assert.Single(options.ElementConverters)).ValidForElementNames);
     }
 
     [Fact]
@@ -486,7 +485,7 @@ public class ConverterOptionsAssemblerTests {
         var options = new ConverterOptions();
         var assembler = new ConverterOptionsAssembler();
 
-        assembler.AddElementRemovingConverter(options, new HashSet<string>());
+        assembler.AddElementRemovingConverter(options, []);
 
         Assert.Empty(options.ElementConverters);
     }

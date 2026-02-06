@@ -15,7 +15,7 @@ public class TextConverterTests {
     public void Convert_Trims_As_Needed(bool isFirstChild, int trailingNewLineCount, string expectedValue) {
         using var writer = new StringWriter();
 
-        var converter = new TextConverter(new Dictionary<char, string>());
+        var converter = new TextConverter([]);
         var nodeData = NodeDataHelper.Create(
             XmlNodeType.Text,
             value: "\t Foo \t",
@@ -34,7 +34,7 @@ public class TextConverterTests {
     public void Convert_Normalizes_Whitespace() {
         using var writer = new StringWriter();
 
-        var converter = new TextConverter(new Dictionary<char, string>());
+        var converter = new TextConverter([]);
         var nodeData = NodeDataHelper.Create(
             XmlNodeType.Text,
             value: "Foo \t \r\n \n\r bar \n\t\r baz"
@@ -51,11 +51,11 @@ public class TextConverterTests {
     public void Convert_Pre(string value, string expectedText) {
         using var writer = new StringWriter();
 
-        var converter = new TextConverter(new Dictionary<char, string>());
+        var converter = new TextConverter([]);
         var nodeData = NodeDataHelper.Create(
             XmlNodeType.Text,
             value: value,
-            ancestors: new List<ElementData>() { ElementDataHelper.Create("pre") }
+            ancestors: [ElementDataHelper.Create("pre")]
         );
 
         converter.Convert(writer, nodeData);

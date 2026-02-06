@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace VDT.Core.XmlConverter.Tests;
 
 public static class ElementDataHelper {
     public static ElementData Create(string name, IEnumerable<ElementData> ancestors)
-        => Create(name, null, false, ancestors.ToList());
+        => Create(name, null, false, [.. ancestors]);
 
     public static ElementData Create(
         string name, 
@@ -16,12 +15,12 @@ public static class ElementDataHelper {
         bool isFirstChild = false,
         Dictionary<string, object?>? additionalData = null
     )
-        => new ElementData(
+        => new(
             name,
-            attributes ?? new Dictionary<string, string>(),
+            attributes ?? [],
             isSelfClosing,
             ancestors ?? Array.Empty<ElementData>(),
             isFirstChild,
-            additionalData ?? new Dictionary<string, object?>()
+            additionalData ?? []
         );
 }

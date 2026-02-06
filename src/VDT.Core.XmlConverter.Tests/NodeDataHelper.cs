@@ -13,12 +13,12 @@ public static class NodeDataHelper {
         bool isFirstChild = false,
         Dictionary<string, object?>? additionalData = null
     )
-        => new NodeData(
+        => new(
             nodeType,
             name ?? "",
             value ?? "",
             ancestors ?? Array.Empty<ElementData>(),
             isFirstChild,
-            additionalData ?? new Dictionary<string, object?>()
+            additionalData ?? []
         );
 }

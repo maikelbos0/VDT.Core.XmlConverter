@@ -78,7 +78,7 @@ public class ContentTrackerTests {
         Assert.True(tracker.HasTrailingNewLine);
     }
 
-    private INodeData GetNodeData(int? trailingNewLineCount, bool hasPrefixes) {
+    private static INodeData GetNodeData(int? trailingNewLineCount, bool hasPrefixes) {
         var nodeData = Substitute.For<INodeData>();
         var additionalData = new Dictionary<string, object?>();
 
@@ -89,7 +89,7 @@ public class ContentTrackerTests {
         }
 
         if (hasPrefixes) {
-            additionalData[nameof(ContentTracker.Prefixes)] = new Stack<string>(new string[] { "\t", "> " });
+            additionalData[nameof(ContentTracker.Prefixes)] = new Stack<string>(["\t", "> "]);
         }
 
         return nodeData;

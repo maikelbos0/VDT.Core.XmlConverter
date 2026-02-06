@@ -2,7 +2,7 @@
 
 internal static class ConversionDataHelper {
     internal static ConversionData Create(ElementData currentElementData)
-        => new ConversionData() {
+        => new() {
             CurrentNodeData = currentElementData
         };
 }

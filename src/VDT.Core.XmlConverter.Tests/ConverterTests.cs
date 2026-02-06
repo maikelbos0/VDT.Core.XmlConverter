@@ -1,5 +1,4 @@
 ﻿using NSubstitute;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Xml;
@@ -326,7 +325,7 @@ namespace VDT.Core.XmlConverter.Tests {
             var validElementConverter = Substitute.For<IElementConverter>();
             var additionalElementConverter = Substitute.For<IElementConverter>();
             var converter = new Converter(new ConverterOptions() {
-                ElementConverters = new List<IElementConverter>() { validElementConverter, additionalElementConverter },
+                ElementConverters = [validElementConverter, additionalElementConverter],
                 DefaultElementConverter = defaultElementConverter
             });
 
@@ -336,8 +335,8 @@ namespace VDT.Core.XmlConverter.Tests {
             converter.ConvertElement(reader, writer, data, elementData);
 
             VerifyConverterIsUsed(validElementConverter, writer);
-            VerifyConverterIsNotUsed(additionalElementConverter, writer);
-            VerifyConverterIsNotUsed(defaultElementConverter, writer);
+            VerifyConverterIsNotUsed(additionalElementConverter);
+            VerifyConverterIsNotUsed(defaultElementConverter);
         }
 
         [Fact]
@@ -350,7 +349,7 @@ namespace VDT.Core.XmlConverter.Tests {
             var invalidElementConverter = Substitute.For<IElementConverter>();
             var defaultElementConverter = Substitute.For<IElementConverter>();
             var converter = new Converter(new ConverterOptions() {
-                ElementConverters = new List<IElementConverter>() { invalidElementConverter },
+                ElementConverters = [invalidElementConverter],
                 DefaultElementConverter = defaultElementConverter
             });
 
@@ -359,7 +358,7 @@ namespace VDT.Core.XmlConverter.Tests {
             converter.ConvertElement(reader, writer, data, Assert.IsType<ElementData>(data.CurrentNodeData));
 
             VerifyConverterIsUsed(defaultElementConverter, writer);
-            VerifyConverterIsNotUsed(invalidElementConverter, writer);
+            VerifyConverterIsNotUsed(invalidElementConverter);
         }
 
         [Fact]
@@ -379,13 +378,13 @@ namespace VDT.Core.XmlConverter.Tests {
             VerifyConverterIsUsed(defaultElementConverter, writer);
         }
 
-        private void VerifyConverterIsUsed(IElementConverter elementConverter, TextWriter writer) {
+        private static void VerifyConverterIsUsed(IElementConverter elementConverter, TextWriter writer) {
             elementConverter.Received().ShouldRenderContent(Arg.Any<ElementData>());
             elementConverter.Received().RenderStart(Arg.Any<ElementData>(), writer);
             elementConverter.Received().RenderEnd(Arg.Any<ElementData>(), writer);
         }
 
-        private void VerifyConverterIsNotUsed(IElementConverter elementConverter, TextWriter writer) {
+        private static void VerifyConverterIsNotUsed(IElementConverter elementConverter) {
             elementConverter.DidNotReceiveWithAnyArgs().ShouldRenderContent(default!);
             elementConverter.DidNotReceiveWithAnyArgs().RenderStart(default!, default!);
             elementConverter.DidNotReceiveWithAnyArgs().RenderEnd(default!, default!);

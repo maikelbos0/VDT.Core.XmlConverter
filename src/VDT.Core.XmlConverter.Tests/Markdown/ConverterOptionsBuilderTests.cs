@@ -1,7 +1,6 @@
 ﻿using NSubstitute;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using VDT.Core.XmlConverter.Markdown;
 using Xunit;
 
@@ -33,34 +32,21 @@ public class ConverterOptionsBuilderTests {
     public void TagsToRemove_Defaults() {
         var builder = new ConverterOptionsBuilder();
 
-        Assert.Equal(new HashSet<string>() {
-            "html",
-            "body",
-            "div",
-            "span"
-        }, builder.TagsToRemove);
+        Assert.Equal(["html", "body", "div", "span"], builder.TagsToRemove);
     }
 
     [Fact]
     public void ElementsToRemove_Defaults() {
         var builder = new ConverterOptionsBuilder();
 
-        Assert.Equal(new HashSet<string>() {
-            "head",
-            "script",
-            "style",
-            "frame",
-            "iframe",
-            "frameset",
-            "meta"
-        }, builder.ElementsToRemove);
+        Assert.Equal(["head", "script", "style", "frame", "iframe", "frameset", "meta"], builder.ElementsToRemove);
     }
 
     [Fact]
     public void ElementConverterTargets_Defaults_To_Basic_Markdown() {
         var builder = new ConverterOptionsBuilder();
 
-        Assert.Equal(new HashSet<ElementConverterTarget>() {
+        Assert.Equal([
             ElementConverterTarget.Heading,
             ElementConverterTarget.Paragraph,
             ElementConverterTarget.Linebreak,
@@ -73,7 +59,7 @@ public class ConverterOptionsBuilderTests {
             ElementConverterTarget.Important,
             ElementConverterTarget.Emphasis,
             ElementConverterTarget.InlineCode
-        }, builder.ElementConverterTargets);
+        ], builder.ElementConverterTargets);
     }
 
     [Fact]
@@ -219,7 +205,7 @@ public class ConverterOptionsBuilderTests {
     public void UseCustomCharacterEscapes_Returns_Self() {
         var builder = new ConverterOptionsBuilder();
 
-        Assert.Same(builder, builder.UseCustomCharacterEscapes(new Dictionary<char, string>()));
+        Assert.Same(builder, builder.UseCustomCharacterEscapes([]));
     }
 
     [Fact]
@@ -245,13 +231,7 @@ public class ConverterOptionsBuilderTests {
 
         builder.AddTagsToRemove("form", "body");
 
-        Assert.Equal(new HashSet<string>() { 
-            "html",
-            "body",
-            "div",
-            "span",
-            "form"
-        }, builder.TagsToRemove);
+        Assert.Equal(["html", "body", "div", "span", "form"], builder.TagsToRemove);
     }
 
     [Fact]
@@ -267,11 +247,7 @@ public class ConverterOptionsBuilderTests {
 
         builder.RemoveTagsToRemove("div", "ol");
 
-        Assert.Equal(new HashSet<string>() {
-            "html",
-            "body",
-            "span"
-        }, builder.TagsToRemove);
+        Assert.Equal(["html", "body", "span"], builder.TagsToRemove);
     }
 
     [Fact]
@@ -287,16 +263,7 @@ public class ConverterOptionsBuilderTests {
 
         builder.AddElementsToRemove("form", "head");
 
-        Assert.Equal(new HashSet<string>() { 
-            "head",
-            "script",
-            "style",
-            "meta",
-            "frame",
-            "iframe",
-            "frameset",
-            "form"
-        }, builder.ElementsToRemove);
+        Assert.Equal(["head", "script", "style", "meta", "frame", "iframe", "frameset", "form"], builder.ElementsToRemove);
     }
 
     [Fact]
@@ -312,13 +279,7 @@ public class ConverterOptionsBuilderTests {
 
         builder.RemoveElementsToRemove("meta", "frameset");
 
-        Assert.Equal(new HashSet<string>() {
-            "head",
-            "script",
-            "style",
-            "frame",
-            "iframe"
-        }, builder.ElementsToRemove);
+        Assert.Equal(["head", "script", "style", "frame", "iframe"], builder.ElementsToRemove);
     }
 
     [Fact]
@@ -334,11 +295,11 @@ public class ConverterOptionsBuilderTests {
 
         builder.AddElementConverters(ElementConverterTarget.Hyperlink, ElementConverterTarget.Image, ElementConverterTarget.InlineCode);
 
-        Assert.Equal(new HashSet<ElementConverterTarget>() {
+        Assert.Equal([
             ElementConverterTarget.Hyperlink,
             ElementConverterTarget.Image,
             ElementConverterTarget.InlineCode,
-        }, builder.ElementConverterTargets);
+        ], builder.ElementConverterTargets);
     }
 
     [Fact]
@@ -354,7 +315,7 @@ public class ConverterOptionsBuilderTests {
 
         builder.AddAllElementConverters();
 
-        Assert.Equal(new HashSet<ElementConverterTarget>(Enum.GetValues(typeof(ElementConverterTarget)).Cast<ElementConverterTarget>()), builder.ElementConverterTargets);
+        Assert.Equal([.. Enum.GetValues<ElementConverterTarget>()], builder.ElementConverterTargets);
     }
 
     [Fact]
@@ -562,7 +523,7 @@ public class ConverterOptionsBuilderTests {
     }
 
     private static ConverterOptionsBuilder CreateBuilder(params ElementConverterTarget[] targets)
-        => new ConverterOptionsBuilder() {
-            ElementConverterTargets = new HashSet<ElementConverterTarget>(targets)
+        => new() {
+            ElementConverterTargets = [.. targets]
         };
 }
