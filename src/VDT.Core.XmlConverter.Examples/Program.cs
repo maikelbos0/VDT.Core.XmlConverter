@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using System.Threading.Tasks;
 
 namespace VDT.Core.XmlConverter.Examples {
     public class Program {
