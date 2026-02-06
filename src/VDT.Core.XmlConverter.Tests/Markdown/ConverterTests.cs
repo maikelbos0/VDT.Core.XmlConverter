@@ -1,7 +1,6 @@
 ﻿using System.IO;
 using VDT.Core.XmlConverter.Markdown;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace VDT.Core.XmlConverter.Tests.Markdown {
     public class ConverterTests {
