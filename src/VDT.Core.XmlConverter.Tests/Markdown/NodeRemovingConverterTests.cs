@@ -3,17 +3,17 @@ using System.Xml;
 using VDT.Core.XmlConverter.Markdown;
 using Xunit;
 
-namespace VDT.Core.XmlConverter.Tests.Markdown {
-    public class NodeRemovingConverterTests {
-        [Fact]
-        public void Convert() {
-            using var writer = new StringWriter();
+namespace VDT.Core.XmlConverter.Tests.Markdown;
 
-            var converter = new NodeRemovingConverter();
+public class NodeRemovingConverterTests {
+    [Fact]
+    public void Convert() {
+        using var writer = new StringWriter();
 
-            converter.Convert(writer, NodeDataHelper.Create(XmlNodeType.Comment));
+        var converter = new NodeRemovingConverter();
 
-            Assert.Equal("", writer.ToString());
-        }
+        converter.Convert(writer, NodeDataHelper.Create(XmlNodeType.Comment));
+
+        Assert.Equal("", writer.ToString());
     }
 }

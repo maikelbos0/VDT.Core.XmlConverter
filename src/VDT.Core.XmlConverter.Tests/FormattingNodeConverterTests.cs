@@ -2,30 +2,30 @@
 using System.Xml;
 using Xunit;
 
-namespace VDT.Core.XmlConverter.Tests {
-    public class FormattingNodeConverterTests {
-        [Fact]
-        public void Convert_Uses_Formatter() {
-            using var writer = new StringWriter();
+namespace VDT.Core.XmlConverter.Tests;
 
-            var converter = new FormattingNodeConverter((name, value) => $"[{name}]='{value}'", false);
+public class FormattingNodeConverterTests {
+    [Fact]
+    public void Convert_Uses_Formatter() {
+        using var writer = new StringWriter();
 
-            converter.Convert(writer, NodeDataHelper.Create(XmlNodeType.ProcessingInstruction, "name", "value"));
+        var converter = new FormattingNodeConverter((name, value) => $"[{name}]='{value}'", false);
 
-            Assert.Equal("[name]='value'", writer.ToString());
-        }
+        converter.Convert(writer, NodeDataHelper.Create(XmlNodeType.ProcessingInstruction, "name", "value"));
 
-        [Theory]
-        [InlineData(true, "Bar &amp; Baz")]
-        [InlineData(false, "Bar & Baz")]
-        public void Convert_XmlEncodes_Value_When_Enabled(bool xmlEncodeValue, string expectedValue) {
-            using var writer = new StringWriter();
+        Assert.Equal("[name]='value'", writer.ToString());
+    }
 
-            var converter = new FormattingNodeConverter((name, value) => value, xmlEncodeValue);
+    [Theory]
+    [InlineData(true, "Bar &amp; Baz")]
+    [InlineData(false, "Bar & Baz")]
+    public void Convert_XmlEncodes_Value_When_Enabled(bool xmlEncodeValue, string expectedValue) {
+        using var writer = new StringWriter();
 
-            converter.Convert(writer, NodeDataHelper.Create(XmlNodeType.Text, "name", "Bar & Baz"));
+        var converter = new FormattingNodeConverter((name, value) => value, xmlEncodeValue);
 
-            Assert.Equal(expectedValue, writer.ToString());
-        }
+        converter.Convert(writer, NodeDataHelper.Create(XmlNodeType.Text, "name", "Bar & Baz"));
+
+        Assert.Equal(expectedValue, writer.ToString());
     }
 }

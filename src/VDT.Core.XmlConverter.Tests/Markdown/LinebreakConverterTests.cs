@@ -2,45 +2,45 @@
 using VDT.Core.XmlConverter.Markdown;
 using Xunit;
 
-namespace VDT.Core.XmlConverter.Tests.Markdown {
-    public class LinebreakConverterTests {
-        [Theory]
-        [InlineData("br", true)]
-        [InlineData("BR", true)]
-        [InlineData("foo", false)]
-        public void IsValidFor(string elementName, bool expectedIsValid) {
-            var converter = new LinebreakConverter();
+namespace VDT.Core.XmlConverter.Tests.Markdown;
 
-            Assert.Equal(expectedIsValid, converter.IsValidFor(ElementDataHelper.Create(elementName)));
-        }
+public class LinebreakConverterTests {
+    [Theory]
+    [InlineData("br", true)]
+    [InlineData("BR", true)]
+    [InlineData("foo", false)]
+    public void IsValidFor(string elementName, bool expectedIsValid) {
+        var converter = new LinebreakConverter();
 
-        [Fact]
-        public void RenderStart() {
-            using var writer = new StringWriter();
+        Assert.Equal(expectedIsValid, converter.IsValidFor(ElementDataHelper.Create(elementName)));
+    }
 
-            var converter = new LinebreakConverter();
+    [Fact]
+    public void RenderStart() {
+        using var writer = new StringWriter();
 
-            converter.RenderStart(ElementDataHelper.Create("br"), writer);
+        var converter = new LinebreakConverter();
 
-            Assert.Equal("  \r\n", writer.ToString(), ignoreLineEndingDifferences: true);
-        }
+        converter.RenderStart(ElementDataHelper.Create("br"), writer);
 
-        [Fact]
-        public void ShouldRenderContent_Returns_False() {
-            var converter = new LinebreakConverter();
+        Assert.Equal("  \r\n", writer.ToString(), ignoreLineEndingDifferences: true);
+    }
 
-            Assert.False(converter.ShouldRenderContent(ElementDataHelper.Create("bar")));
-        }
+    [Fact]
+    public void ShouldRenderContent_Returns_False() {
+        var converter = new LinebreakConverter();
 
-        [Fact]
-        public void RenderEnd() {
-            using var writer = new StringWriter();
+        Assert.False(converter.ShouldRenderContent(ElementDataHelper.Create("bar")));
+    }
 
-            var converter = new LinebreakConverter();
+    [Fact]
+    public void RenderEnd() {
+        using var writer = new StringWriter();
 
-            converter.RenderEnd(ElementDataHelper.Create("bar"), writer);
+        var converter = new LinebreakConverter();
 
-            Assert.Equal("", writer.ToString());
-        }
+        converter.RenderEnd(ElementDataHelper.Create("bar"), writer);
+
+        Assert.Equal("", writer.ToString());
     }
 }

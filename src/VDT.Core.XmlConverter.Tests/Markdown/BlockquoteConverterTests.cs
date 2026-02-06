@@ -3,52 +3,52 @@ using System.IO;
 using VDT.Core.XmlConverter.Markdown;
 using Xunit;
 
-namespace VDT.Core.XmlConverter.Tests.Markdown {
-    public class BlockquoteConverterTests {
-        [Theory]
-        [InlineData("blockquote", true)]
-        [InlineData("BLOCKQUOTE", true)]
-        [InlineData("foo", false)]
-        public void IsValidFor(string elementName, bool expectedIsValid) {
-            var converter = new BlockquoteConverter();
+namespace VDT.Core.XmlConverter.Tests.Markdown;
 
-            Assert.Equal(expectedIsValid, converter.IsValidFor(ElementDataHelper.Create(elementName)));
-        }
+public class BlockquoteConverterTests {
+    [Theory]
+    [InlineData("blockquote", true)]
+    [InlineData("BLOCKQUOTE", true)]
+    [InlineData("foo", false)]
+    public void IsValidFor(string elementName, bool expectedIsValid) {
+        var converter = new BlockquoteConverter();
 
-        [Fact]
-        public void RenderStart() {
-            using var writer = new StringWriter();
+        Assert.Equal(expectedIsValid, converter.IsValidFor(ElementDataHelper.Create(elementName)));
+    }
 
-            var converter = new BlockquoteConverter();
-            var elementData = ElementDataHelper.Create("blockquote");
+    [Fact]
+    public void RenderStart() {
+        using var writer = new StringWriter();
 
-            converter.RenderStart(elementData, writer);
+        var converter = new BlockquoteConverter();
+        var elementData = ElementDataHelper.Create("blockquote");
 
-            Assert.Equal("\r\n", writer.ToString(), ignoreLineEndingDifferences: true);
-            Assert.Equal("> ", Assert.Single(Assert.IsType<Stack<string>>(elementData.AdditionalData[nameof(ContentTracker.Prefixes)])));
-        }
+        converter.RenderStart(elementData, writer);
 
-        [Fact]
-        public void RenderEnd() {
-            using var writer = new StringWriter();
+        Assert.Equal("\r\n", writer.ToString(), ignoreLineEndingDifferences: true);
+        Assert.Equal("> ", Assert.Single(Assert.IsType<Stack<string>>(elementData.AdditionalData[nameof(ContentTracker.Prefixes)])));
+    }
 
-            var converter = new BlockquoteConverter();
-            var prefixes = new Stack<string>();
-            var elementData = ElementDataHelper.Create(
-                "blockquote",
-                additionalData: new Dictionary<string, object?>() {
-                    { nameof(ContentTracker.Prefixes), prefixes },
-                    { nameof(ContentTracker.TrailingNewLineCount), 1 }
-                }
-            );
-            
-            prefixes.Push("\t");
-            prefixes.Push("> ");
+    [Fact]
+    public void RenderEnd() {
+        using var writer = new StringWriter();
 
-            converter.RenderEnd(elementData, writer);
+        var converter = new BlockquoteConverter();
+        var prefixes = new Stack<string>();
+        var elementData = ElementDataHelper.Create(
+            "blockquote",
+            additionalData: new Dictionary<string, object?>() {
+                { nameof(ContentTracker.Prefixes), prefixes },
+                { nameof(ContentTracker.TrailingNewLineCount), 1 }
+            }
+        );
+        
+        prefixes.Push("\t");
+        prefixes.Push("> ");
 
-            Assert.Equal("\t\r\n", writer.ToString(), ignoreLineEndingDifferences: true);
-            Assert.Equal("\t", Assert.Single(Assert.IsType<Stack<string>>(elementData.AdditionalData[nameof(ContentTracker.Prefixes)])));
-        }
+        converter.RenderEnd(elementData, writer);
+
+        Assert.Equal("\t\r\n", writer.ToString(), ignoreLineEndingDifferences: true);
+        Assert.Equal("\t", Assert.Single(Assert.IsType<Stack<string>>(elementData.AdditionalData[nameof(ContentTracker.Prefixes)])));
     }
 }

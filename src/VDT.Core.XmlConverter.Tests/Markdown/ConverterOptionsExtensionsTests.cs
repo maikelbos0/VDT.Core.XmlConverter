@@ -1,34 +1,34 @@
 ﻿using VDT.Core.XmlConverter.Markdown;
 using Xunit;
 
-namespace VDT.Core.XmlConverter.Tests.Markdown {
-    public class ConverterOptionsExtensionsTests {
-        [Fact]
-        public void UseMarkdown_Returns_Self() {
-            var options = new ConverterOptions();
+namespace VDT.Core.XmlConverter.Tests.Markdown;
 
-            Assert.Same(options, options.UseMarkdown());
-        }
+public class ConverterOptionsExtensionsTests {
+    [Fact]
+    public void UseMarkdown_Returns_Self() {
+        var options = new ConverterOptions();
 
-        [Fact]
-        public void CreateMarkdownBuilder_Sets_UnknownElementHandlingMode() {
-            var builder = ConverterOptionsExtensions.CreateMarkdownBuilder(false, UnknownElementHandlingMode.RemoveTags);
+        Assert.Same(options, options.UseMarkdown());
+    }
 
-            Assert.Equal(UnknownElementHandlingMode.RemoveTags, builder.UnknownElementHandlingMode);
-        }
+    [Fact]
+    public void CreateMarkdownBuilder_Sets_UnknownElementHandlingMode() {
+        var builder = ConverterOptionsExtensions.CreateMarkdownBuilder(false, UnknownElementHandlingMode.RemoveTags);
 
-        [Fact]
-        public void CreateMarkdownBuilder_With_UseExtendedSyntax_True_Adds_All_ElementConverterTargets() {
-            var builder = ConverterOptionsExtensions.CreateMarkdownBuilder(true, null);
+        Assert.Equal(UnknownElementHandlingMode.RemoveTags, builder.UnknownElementHandlingMode);
+    }
 
-            Assert.Equal(new ConverterOptionsBuilder().AddAllElementConverters().ElementConverterTargets, builder.ElementConverterTargets);
-        }
+    [Fact]
+    public void CreateMarkdownBuilder_With_UseExtendedSyntax_True_Adds_All_ElementConverterTargets() {
+        var builder = ConverterOptionsExtensions.CreateMarkdownBuilder(true, null);
 
-        [Fact]
-        public void CreateMarkdownBuilder_With_UseExtendedSyntax_False_Adds_Basic_ElementConverterTarget() {
-            var builder = ConverterOptionsExtensions.CreateMarkdownBuilder(false, null);
+        Assert.Equal(new ConverterOptionsBuilder().AddAllElementConverters().ElementConverterTargets, builder.ElementConverterTargets);
+    }
 
-            Assert.Equal(new ConverterOptionsBuilder().ElementConverterTargets, builder.ElementConverterTargets);
-        }
+    [Fact]
+    public void CreateMarkdownBuilder_With_UseExtendedSyntax_False_Adds_Basic_ElementConverterTarget() {
+        var builder = ConverterOptionsExtensions.CreateMarkdownBuilder(false, null);
+
+        Assert.Equal(new ConverterOptionsBuilder().ElementConverterTargets, builder.ElementConverterTargets);
     }
 }

@@ -2,38 +2,38 @@
 using VDT.Core.XmlConverter.Markdown;
 using Xunit;
 
-namespace VDT.Core.XmlConverter.Tests.Markdown {
-    public class FencedPreConverterTests {
-        [Theory]
-        [InlineData("pre", true)]
-        [InlineData("PRE", true)]
-        [InlineData("foo", false)]
-        public void IsValidFor(string elementName, bool expectedIsValid) {
-            var converter = new FencedPreConverter();
+namespace VDT.Core.XmlConverter.Tests.Markdown;
 
-            Assert.Equal(expectedIsValid, converter.IsValidFor(ElementDataHelper.Create(elementName)));
-        }
+public class FencedPreConverterTests {
+    [Theory]
+    [InlineData("pre", true)]
+    [InlineData("PRE", true)]
+    [InlineData("foo", false)]
+    public void IsValidFor(string elementName, bool expectedIsValid) {
+        var converter = new FencedPreConverter();
 
-        [Fact]
-        public void RenderStart() {
-            using var writer = new StringWriter();
+        Assert.Equal(expectedIsValid, converter.IsValidFor(ElementDataHelper.Create(elementName)));
+    }
 
-            var converter = new FencedPreConverter();
+    [Fact]
+    public void RenderStart() {
+        using var writer = new StringWriter();
 
-            converter.RenderStart(ElementDataHelper.Create("pre"), writer);
+        var converter = new FencedPreConverter();
 
-            Assert.Equal("\r\n```", writer.ToString(), ignoreLineEndingDifferences: true);
-        }
+        converter.RenderStart(ElementDataHelper.Create("pre"), writer);
 
-        [Fact]
-        public void RenderEnd() {
-            using var writer = new StringWriter();
+        Assert.Equal("\r\n```", writer.ToString(), ignoreLineEndingDifferences: true);
+    }
 
-            var converter = new FencedPreConverter();
+    [Fact]
+    public void RenderEnd() {
+        using var writer = new StringWriter();
 
-            converter.RenderEnd(ElementDataHelper.Create("pre"), writer);
+        var converter = new FencedPreConverter();
 
-            Assert.Equal("\r\n```\r\n", writer.ToString(), ignoreLineEndingDifferences: true);
-        }
+        converter.RenderEnd(ElementDataHelper.Create("pre"), writer);
+
+        Assert.Equal("\r\n```\r\n", writer.ToString(), ignoreLineEndingDifferences: true);
     }
 }

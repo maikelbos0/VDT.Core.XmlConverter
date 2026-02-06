@@ -4,59 +4,59 @@ using System.Linq;
 using VDT.Core.XmlConverter.Markdown;
 using Xunit;
 
-namespace VDT.Core.XmlConverter.Tests.Markdown {
-    public class UnorderedListItemConverterTests {
-        [Theory]
-        [InlineData(false, "div")]
-        [InlineData(false, "div", "ol")]
-        [InlineData(true, "li")]
-        [InlineData(true, "li", "ul")]
-        [InlineData(false, "li", "ol")]
-        [InlineData(true, "li", "ul", "ol")]
-        [InlineData(false, "li", "ol", "ul")]
-        public void IsValidFor(bool expectedIsValidFor, string elementName, params string[] ancestorElementNames) {
-            var converter = new UnorderedListItemConverter();
-            var elementData = ElementDataHelper.Create(
-                elementName,
-                ancestorElementNames.Select(n => ElementDataHelper.Create(n))
-            );
+namespace VDT.Core.XmlConverter.Tests.Markdown;
 
-            Assert.Equal(expectedIsValidFor, converter.IsValidFor(elementData));
-        }
+public class UnorderedListItemConverterTests {
+    [Theory]
+    [InlineData(false, "div")]
+    [InlineData(false, "div", "ol")]
+    [InlineData(true, "li")]
+    [InlineData(true, "li", "ul")]
+    [InlineData(false, "li", "ol")]
+    [InlineData(true, "li", "ul", "ol")]
+    [InlineData(false, "li", "ol", "ul")]
+    public void IsValidFor(bool expectedIsValidFor, string elementName, params string[] ancestorElementNames) {
+        var converter = new UnorderedListItemConverter();
+        var elementData = ElementDataHelper.Create(
+            elementName,
+            ancestorElementNames.Select(n => ElementDataHelper.Create(n))
+        );
 
-        [Fact]
-        public void RenderStart() {
-            using var writer = new StringWriter();
+        Assert.Equal(expectedIsValidFor, converter.IsValidFor(elementData));
+    }
 
-            var converter = new UnorderedListItemConverter();
-            var elementData = ElementDataHelper.Create("li");
+    [Fact]
+    public void RenderStart() {
+        using var writer = new StringWriter();
 
-            converter.RenderStart(elementData, writer);
+        var converter = new UnorderedListItemConverter();
+        var elementData = ElementDataHelper.Create("li");
 
-            Assert.Equal("\r\n- ", writer.ToString(), ignoreLineEndingDifferences: true);
-            Assert.Equal("\t", Assert.Single(Assert.IsType<Stack<string>>(elementData.AdditionalData[nameof(ContentTracker.Prefixes)])));
-        }
+        converter.RenderStart(elementData, writer);
 
-        [Fact]
-        public void RenderEnd() {
-            using var writer = new StringWriter();
+        Assert.Equal("\r\n- ", writer.ToString(), ignoreLineEndingDifferences: true);
+        Assert.Equal("\t", Assert.Single(Assert.IsType<Stack<string>>(elementData.AdditionalData[nameof(ContentTracker.Prefixes)])));
+    }
 
-            var converter = new UnorderedListItemConverter();
-            var prefixes = new Stack<string>();
-            var elementData = ElementDataHelper.Create(
-                "li",
-                additionalData: new Dictionary<string, object?>() {
-                    { nameof(ContentTracker.Prefixes), prefixes }
-                }
-            );
+    [Fact]
+    public void RenderEnd() {
+        using var writer = new StringWriter();
 
-            prefixes.Push("> ");
-            prefixes.Push("\t");
+        var converter = new UnorderedListItemConverter();
+        var prefixes = new Stack<string>();
+        var elementData = ElementDataHelper.Create(
+            "li",
+            additionalData: new Dictionary<string, object?>() {
+                { nameof(ContentTracker.Prefixes), prefixes }
+            }
+        );
 
-            converter.RenderEnd(elementData, writer);
+        prefixes.Push("> ");
+        prefixes.Push("\t");
 
-            Assert.Equal("\r\n", writer.ToString(), ignoreLineEndingDifferences: true);
-            Assert.Equal("> ", Assert.Single(Assert.IsType<Stack<string>>(elementData.AdditionalData[nameof(ContentTracker.Prefixes)])));
-        }
+        converter.RenderEnd(elementData, writer);
+
+        Assert.Equal("\r\n", writer.ToString(), ignoreLineEndingDifferences: true);
+        Assert.Equal("> ", Assert.Single(Assert.IsType<Stack<string>>(elementData.AdditionalData[nameof(ContentTracker.Prefixes)])));
     }
 }
