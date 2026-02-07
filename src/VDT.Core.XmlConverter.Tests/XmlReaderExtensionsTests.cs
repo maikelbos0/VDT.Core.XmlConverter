@@ -3,47 +3,47 @@ using System.Text;
 using System.Xml;
 using Xunit;
 
-namespace VDT.Core.XmlConverter.Tests {
-    public class XmlReaderExtensionsTests {
-        [Fact]
-        public void GetAttributes_Returns_Element_Attributes_When_Present() {
-            const string xml = "<foo bar=\"bar\" baz=\"quux quux\">Content</foo>";
+namespace VDT.Core.XmlConverter.Tests;
 
-            using var stream = new MemoryStream(Encoding.UTF8.GetBytes(xml));
-            using var reader = XmlReader.Create(stream);
-                        
-            reader.Read(); // Move to element
+public class XmlReaderExtensionsTests {
+    [Fact]
+    public void GetAttributes_Returns_Element_Attributes_When_Present() {
+        const string xml = "<foo bar=\"bar\" baz=\"quux quux\">Content</foo>";
 
-            var attributes = reader.GetAttributes();
+        using var stream = new MemoryStream(Encoding.UTF8.GetBytes(xml));
+        using var reader = XmlReader.Create(stream);
+                    
+        reader.Read(); // Move to element
 
-            Assert.Equal(2, attributes.Count);
-            Assert.Equal("bar", attributes["bar"]);
-            Assert.Equal("quux quux", attributes["baz"]);
-        }
+        var attributes = reader.GetAttributes();
 
-        [Fact]
-        public void GetAttributes_Returns_Empty_Dictionary_For_Element_Without_Attributes() {
-            const string xml = "<foo>Content</foo>";
+        Assert.Equal(2, attributes.Count);
+        Assert.Equal("bar", attributes["bar"]);
+        Assert.Equal("quux quux", attributes["baz"]);
+    }
 
-            using var stream = new MemoryStream(Encoding.UTF8.GetBytes(xml));
-            using var reader = XmlReader.Create(stream);
+    [Fact]
+    public void GetAttributes_Returns_Empty_Dictionary_For_Element_Without_Attributes() {
+        const string xml = "<foo>Content</foo>";
 
-            reader.Read(); // Move to element
+        using var stream = new MemoryStream(Encoding.UTF8.GetBytes(xml));
+        using var reader = XmlReader.Create(stream);
 
-            Assert.Empty(reader.GetAttributes());
-        }
+        reader.Read(); // Move to element
 
-        [Fact]
-        public void GetAttributes_Returns_Empty_Dictionary_For_Other_NodeType() {
-            const string xml = "<foo bar=\"bar\">Content</foo>";
+        Assert.Empty(reader.GetAttributes());
+    }
 
-            using var stream = new MemoryStream(Encoding.UTF8.GetBytes(xml));
-            using var reader = XmlReader.Create(stream);
+    [Fact]
+    public void GetAttributes_Returns_Empty_Dictionary_For_Other_NodeType() {
+        const string xml = "<foo bar=\"bar\">Content</foo>";
 
-            reader.Read(); // Move to element            
-            reader.Read(); // Move to text
+        using var stream = new MemoryStream(Encoding.UTF8.GetBytes(xml));
+        using var reader = XmlReader.Create(stream);
 
-            Assert.Empty(reader.GetAttributes());
-        }
+        reader.Read(); // Move to element            
+        reader.Read(); // Move to text
+
+        Assert.Empty(reader.GetAttributes());
     }
 }

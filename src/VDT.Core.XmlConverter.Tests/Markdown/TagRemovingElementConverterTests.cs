@@ -2,28 +2,28 @@
 using VDT.Core.XmlConverter.Markdown;
 using Xunit;
 
-namespace VDT.Core.XmlConverter.Tests.Markdown {
-    public class TagRemovingElementConverterTests {
-        [Fact]
-        public void RenderStart() {
-            using var writer = new StringWriter();
+namespace VDT.Core.XmlConverter.Tests.Markdown;
 
-            var converter = new TagRemovingElementConverter("foo", "bar");
+public class TagRemovingElementConverterTests {
+    [Fact]
+    public void RenderStart() {
+        using var writer = new StringWriter();
 
-            converter.RenderStart(ElementDataHelper.Create("bar"), writer);
+        var converter = new TagRemovingElementConverter("foo", "bar");
 
-            Assert.Equal("", writer.ToString());
-        }
+        converter.RenderStart(ElementDataHelper.Create("bar"), writer);
 
-        [Fact]
-        public void RenderEnd() {
-            using var writer = new StringWriter();
+        Assert.Equal("", writer.ToString());
+    }
 
-            var converter = new TagRemovingElementConverter("foo", "bar");
+    [Fact]
+    public void RenderEnd() {
+        using var writer = new StringWriter();
 
-            converter.RenderEnd(ElementDataHelper.Create("bar"), writer);
+        var converter = new TagRemovingElementConverter("foo", "bar");
 
-            Assert.Equal("", writer.ToString());
-        }
+        converter.RenderEnd(ElementDataHelper.Create("bar"), writer);
+
+        Assert.Equal("", writer.ToString());
     }
 }

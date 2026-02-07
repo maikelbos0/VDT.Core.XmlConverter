@@ -27,14 +27,14 @@
     private string Header => string.Join(", ", Items.Where(item => SelectedItems.Contains(item.Key)).Select(item => item.Description).DefaultIfEmpty("(none selected)"));
 
     [Parameter]
-    public HashSet<TItem> SelectedItems { get; set; } = new();
+    public HashSet<TItem> SelectedItems { get; set; } = [];
 
     [Parameter]
     public EventCallback<HashSet<TItem>> SelectedItemsChanged { get; set; }
 
     [EditorRequired]
     [Parameter]
-    public List<(TItem Key, string Description)> Items { get; set; } = new();
+    public List<(TItem Key, string Description)> Items { get; set; } = [];
 
     private async Task OnItemSelectedChange(TItem item) {
         if (SelectedItems.Contains(item)) {

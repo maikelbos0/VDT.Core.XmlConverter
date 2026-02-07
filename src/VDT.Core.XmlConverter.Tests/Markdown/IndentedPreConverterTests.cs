@@ -3,52 +3,52 @@ using System.IO;
 using VDT.Core.XmlConverter.Markdown;
 using Xunit;
 
-namespace VDT.Core.XmlConverter.Tests.Markdown {
-    public class IndentedPreConverterTests {
-        [Theory]
-        [InlineData("pre", true)]
-        [InlineData("PRE", true)]
-        [InlineData("foo", false)]
-        public void IsValidFor(string elementName, bool expectedIsValid) {
-            var converter = new IndentedPreConverter();
+namespace VDT.Core.XmlConverter.Tests.Markdown;
 
-            Assert.Equal(expectedIsValid, converter.IsValidFor(ElementDataHelper.Create(elementName)));
-        }
+public class IndentedPreConverterTests {
+    [Theory]
+    [InlineData("pre", true)]
+    [InlineData("PRE", true)]
+    [InlineData("foo", false)]
+    public void IsValidFor(string elementName, bool expectedIsValid) {
+        var converter = new IndentedPreConverter();
 
-        [Fact]
-        public void RenderStart() {
-            using var writer = new StringWriter();
+        Assert.Equal(expectedIsValid, converter.IsValidFor(ElementDataHelper.Create(elementName)));
+    }
 
-            var converter = new IndentedPreConverter();
-            var elementData = ElementDataHelper.Create("pre");
+    [Fact]
+    public void RenderStart() {
+        using var writer = new StringWriter();
 
-            converter.RenderStart(elementData, writer);
+        var converter = new IndentedPreConverter();
+        var elementData = ElementDataHelper.Create("pre");
 
-            Assert.Equal("\r\n", writer.ToString(), ignoreLineEndingDifferences: true);
-            Assert.Equal("\t", Assert.Single(Assert.IsType<Stack<string>>(elementData.AdditionalData[nameof(ContentTracker.Prefixes)])));
-        }
+        converter.RenderStart(elementData, writer);
 
-        [Fact]
-        public void RenderEnd() {
-            using var writer = new StringWriter();
+        Assert.Equal("\r\n", writer.ToString(), ignoreLineEndingDifferences: true);
+        Assert.Equal("\t", Assert.Single(Assert.IsType<Stack<string>>(elementData.AdditionalData[nameof(ContentTracker.Prefixes)])));
+    }
 
-            var converter = new IndentedPreConverter();
-            var prefixes = new Stack<string>();
-            var elementData = ElementDataHelper.Create(
-                "pre",
-                additionalData: new Dictionary<string, object?>() {
-                    { nameof(ContentTracker.Prefixes), prefixes },
-                    { nameof(ContentTracker.TrailingNewLineCount), 1 }
-                }
-            );
+    [Fact]
+    public void RenderEnd() {
+        using var writer = new StringWriter();
 
-            prefixes.Push("> ");
-            prefixes.Push("\t");
+        var converter = new IndentedPreConverter();
+        var prefixes = new Stack<string>();
+        var elementData = ElementDataHelper.Create(
+            "pre",
+            additionalData: new Dictionary<string, object?>() {
+                { nameof(ContentTracker.Prefixes), prefixes },
+                { nameof(ContentTracker.TrailingNewLineCount), 1 }
+            }
+        );
 
-            converter.RenderEnd(elementData, writer);
+        prefixes.Push("> ");
+        prefixes.Push("\t");
 
-            Assert.Equal("> \r\n", writer.ToString(), ignoreLineEndingDifferences: true);
-            Assert.Equal("> ", Assert.Single(Assert.IsType<Stack<string>>(elementData.AdditionalData[nameof(ContentTracker.Prefixes)])));
-        }
+        converter.RenderEnd(elementData, writer);
+
+        Assert.Equal("> \r\n", writer.ToString(), ignoreLineEndingDifferences: true);
+        Assert.Equal("> ", Assert.Single(Assert.IsType<Stack<string>>(elementData.AdditionalData[nameof(ContentTracker.Prefixes)])));
     }
 }

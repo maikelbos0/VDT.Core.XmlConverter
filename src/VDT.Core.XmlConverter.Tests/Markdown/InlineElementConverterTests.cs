@@ -2,28 +2,28 @@
 using VDT.Core.XmlConverter.Markdown;
 using Xunit;
 
-namespace VDT.Core.XmlConverter.Tests.Markdown {
-    public class InlineElementConverterTests {
-        [Fact]
-        public void RenderStart() {
-            using var writer = new StringWriter();
+namespace VDT.Core.XmlConverter.Tests.Markdown;
 
-            var converter = new InlineElementConverter("start", "end", "foo", "bar");
+public class InlineElementConverterTests {
+    [Fact]
+    public void RenderStart() {
+        using var writer = new StringWriter();
 
-            converter.RenderStart(ElementDataHelper.Create("bar"), writer);
+        var converter = new InlineElementConverter("start", "end", "foo", "bar");
 
-            Assert.Equal("start", writer.ToString());
-        }
+        converter.RenderStart(ElementDataHelper.Create("bar"), writer);
 
-        [Fact]
-        public void RenderEnd() {
-            using var writer = new StringWriter();
+        Assert.Equal("start", writer.ToString());
+    }
 
-            var converter = new InlineElementConverter("start", "end", "foo", "bar");
+    [Fact]
+    public void RenderEnd() {
+        using var writer = new StringWriter();
 
-            converter.RenderEnd(ElementDataHelper.Create("bar"), writer);
+        var converter = new InlineElementConverter("start", "end", "foo", "bar");
 
-            Assert.Equal("end", writer.ToString());
-        }
+        converter.RenderEnd(ElementDataHelper.Create("bar"), writer);
+
+        Assert.Equal("end", writer.ToString());
     }
 }

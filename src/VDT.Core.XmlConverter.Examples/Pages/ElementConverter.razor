@@ -94,9 +94,7 @@
         ValidAttributeName = "convert",
         ReplaceElementName = true,
         NewElementName = "Value",
-        AttributesToRemove = new() {
-            "convert"
-        },
+        AttributesToRemove = ["convert"],
         RenderContent = true
     };
     private Converter Converter { get; }
@@ -131,7 +129,7 @@
         public string? ValidAttributeName { get; set; }
         public bool ReplaceElementName { get; set; }
         public string? NewElementName { get; set; }
-        public HashSet<string> AttributesToRemove { get; set; } = new();
+        public HashSet<string> AttributesToRemove { get; set; } = [];
         public bool RenderContent { get; set; }
 
         public bool IsValidFor(ElementData elementData) {

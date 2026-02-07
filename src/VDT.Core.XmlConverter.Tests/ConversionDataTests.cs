@@ -4,180 +4,180 @@ using System.Text;
 using System.Xml;
 using Xunit;
 
-namespace VDT.Core.XmlConverter.Tests {
-    public class ConversionDataTests {
-        [Theory]
-        [InlineData("<!-- Test -->", XmlNodeType.Comment, "", " Test ")]
-        [InlineData("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", XmlNodeType.XmlDeclaration, "xml", "version=\"1.0\" encoding=\"UTF-8\"")]
-        [InlineData("<?xml-stylesheet type=\"text/xsl\" href=\"style.xsl\"?>", XmlNodeType.ProcessingInstruction, "xml-stylesheet", "type=\"text/xsl\" href=\"style.xsl\"")]
-        public void ReadNode_Sets_CurrentNodeData_To_NodeData_If_Not_Element(string xml, XmlNodeType expectedNodeType, string expectedName, string expectedValue) {
-            using var stream = new MemoryStream(Encoding.UTF8.GetBytes(xml));
-            using var reader = XmlReader.Create(stream);
+namespace VDT.Core.XmlConverter.Tests;
 
-            var data = new ConversionData();
+public class ConversionDataTests {
+    [Theory]
+    [InlineData("<!-- Test -->", XmlNodeType.Comment, "", " Test ")]
+    [InlineData("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", XmlNodeType.XmlDeclaration, "xml", "version=\"1.0\" encoding=\"UTF-8\"")]
+    [InlineData("<?xml-stylesheet type=\"text/xsl\" href=\"style.xsl\"?>", XmlNodeType.ProcessingInstruction, "xml-stylesheet", "type=\"text/xsl\" href=\"style.xsl\"")]
+    public void ReadNode_Sets_CurrentNodeData_To_NodeData_If_Not_Element(string xml, XmlNodeType expectedNodeType, string expectedName, string expectedValue) {
+        using var stream = new MemoryStream(Encoding.UTF8.GetBytes(xml));
+        using var reader = XmlReader.Create(stream);
 
-            reader.Read(); // Move to node
-            data.AdditionalData["test"] = "test";
+        var data = new ConversionData();
 
-            data.ReadNode(reader);
+        reader.Read(); // Move to node
+        data.AdditionalData["test"] = "test";
 
-            var nodeData = Assert.IsType<NodeData>(data.CurrentNodeData);
+        data.ReadNode(reader);
 
-            Assert.Equal(expectedNodeType, nodeData.NodeType);
-            Assert.Equal(expectedName, nodeData.Name);
-            Assert.Equal(expectedValue, nodeData.Value);
-            Assert.True(nodeData.IsFirstChild);
-            Assert.Equal("test", nodeData.AdditionalData["test"]);
-        }
+        var nodeData = Assert.IsType<NodeData>(data.CurrentNodeData);
 
-        [Theory]
-        [InlineData("<foo bar=\"baz\">Content</foo>", "foo", false)]
-        [InlineData("<foo bar=\"baz\"/>", "foo", true)]
-        public void ReadNode_Sets_CurrentNodeData_To_ElementData_If_Element(string xml, string expectedName, bool expectedIsSelfClosing) {
-            using var stream = new MemoryStream(Encoding.UTF8.GetBytes(xml));
-            using var reader = XmlReader.Create(stream);
+        Assert.Equal(expectedNodeType, nodeData.NodeType);
+        Assert.Equal(expectedName, nodeData.Name);
+        Assert.Equal(expectedValue, nodeData.Value);
+        Assert.True(nodeData.IsFirstChild);
+        Assert.Equal("test", nodeData.AdditionalData["test"]);
+    }
 
-            var data = new ConversionData();
+    [Theory]
+    [InlineData("<foo bar=\"baz\">Content</foo>", "foo", false)]
+    [InlineData("<foo bar=\"baz\"/>", "foo", true)]
+    public void ReadNode_Sets_CurrentNodeData_To_ElementData_If_Element(string xml, string expectedName, bool expectedIsSelfClosing) {
+        using var stream = new MemoryStream(Encoding.UTF8.GetBytes(xml));
+        using var reader = XmlReader.Create(stream);
 
-            reader.Read(); // Move to element
-            data.AdditionalData["test"] = "test";
+        var data = new ConversionData();
 
-            data.ReadNode(reader);
+        reader.Read(); // Move to element
+        data.AdditionalData["test"] = "test";
 
-            var elementData = Assert.IsType<ElementData>(data.CurrentNodeData);
+        data.ReadNode(reader);
 
-            Assert.Equal(expectedName, elementData.Name);
-            Assert.NotEmpty(elementData.Attributes);
-            Assert.Equal(expectedIsSelfClosing, elementData.IsSelfClosing);
-            Assert.True(elementData.IsFirstChild);
-            Assert.Equal("test", elementData.AdditionalData["test"]);
-        }
+        var elementData = Assert.IsType<ElementData>(data.CurrentNodeData);
 
-        [Fact]
-        public void ReadNode_Sets_IsFirstChild_True_For_First_Node() {
-            using var stream = new MemoryStream(Encoding.UTF8.GetBytes("<foo/><foo/>"));
-            using var reader = XmlReader.Create(stream, new XmlReaderSettings() { ConformanceLevel = ConformanceLevel.Fragment });
+        Assert.Equal(expectedName, elementData.Name);
+        Assert.NotEmpty(elementData.Attributes);
+        Assert.Equal(expectedIsSelfClosing, elementData.IsSelfClosing);
+        Assert.True(elementData.IsFirstChild);
+        Assert.Equal("test", elementData.AdditionalData["test"]);
+    }
 
-            var data = new ConversionData();
+    [Fact]
+    public void ReadNode_Sets_IsFirstChild_True_For_First_Node() {
+        using var stream = new MemoryStream(Encoding.UTF8.GetBytes("<foo/><foo/>"));
+        using var reader = XmlReader.Create(stream, new XmlReaderSettings() { ConformanceLevel = ConformanceLevel.Fragment });
 
-            data.ReadNode(reader); // First element
+        var data = new ConversionData();
 
-            Assert.True(data.CurrentNodeData.IsFirstChild);
-        }
+        data.ReadNode(reader); // First element
 
-        [Fact]
-        public void ReadNode_Sets_IsFirstChild_False_For_Not_First_Node() {
-            using var stream = new MemoryStream(Encoding.UTF8.GetBytes("<foo/><foo/>"));
-            using var reader = XmlReader.Create(stream, new XmlReaderSettings() { ConformanceLevel = ConformanceLevel.Fragment });
+        Assert.True(data.CurrentNodeData.IsFirstChild);
+    }
 
-            var data = new ConversionData();
+    [Fact]
+    public void ReadNode_Sets_IsFirstChild_False_For_Not_First_Node() {
+        using var stream = new MemoryStream(Encoding.UTF8.GetBytes("<foo/><foo/>"));
+        using var reader = XmlReader.Create(stream, new XmlReaderSettings() { ConformanceLevel = ConformanceLevel.Fragment });
 
-            ReadNextElement(reader, data); // First element
-            ReadNextElement(reader, data); // Next element
+        var data = new ConversionData();
 
-            Assert.False(data.CurrentNodeData.IsFirstChild);
-        }
+        ReadNextElement(reader, data); // First element
+        ReadNextElement(reader, data); // Next element
 
-        [Fact]
-        public void ReadNode_Sets_IsFirstChild_True_For_First_Child() {
-            using var stream = new MemoryStream(Encoding.UTF8.GetBytes("<foo><bar/><bar/></foo>"));
-            using var reader = XmlReader.Create(stream, new XmlReaderSettings() { ConformanceLevel = ConformanceLevel.Fragment });
+        Assert.False(data.CurrentNodeData.IsFirstChild);
+    }
 
-            var data = new ConversionData();
+    [Fact]
+    public void ReadNode_Sets_IsFirstChild_True_For_First_Child() {
+        using var stream = new MemoryStream(Encoding.UTF8.GetBytes("<foo><bar/><bar/></foo>"));
+        using var reader = XmlReader.Create(stream, new XmlReaderSettings() { ConformanceLevel = ConformanceLevel.Fragment });
 
-            ReadNextElement(reader, data); // Parent element
-            ReadNextElement(reader, data); // First child element
+        var data = new ConversionData();
 
-            Assert.True(data.CurrentNodeData.IsFirstChild);
-        }
+        ReadNextElement(reader, data); // Parent element
+        ReadNextElement(reader, data); // First child element
 
-        [Fact]
-        public void ReadNode_Sets_IsFirstChild_False_For_Not_First_Child() {
-            using var stream = new MemoryStream(Encoding.UTF8.GetBytes("<foo><bar/><bar/></foo>"));
-            using var reader = XmlReader.Create(stream, new XmlReaderSettings() { ConformanceLevel = ConformanceLevel.Fragment });
+        Assert.True(data.CurrentNodeData.IsFirstChild);
+    }
 
-            var data = new ConversionData();
+    [Fact]
+    public void ReadNode_Sets_IsFirstChild_False_For_Not_First_Child() {
+        using var stream = new MemoryStream(Encoding.UTF8.GetBytes("<foo><bar/><bar/></foo>"));
+        using var reader = XmlReader.Create(stream, new XmlReaderSettings() { ConformanceLevel = ConformanceLevel.Fragment });
 
-            ReadNextElement(reader, data); // Parent element
-            ReadNextElement(reader, data); // First child element
-            ReadNextElement(reader, data); // Next child element
+        var data = new ConversionData();
 
-            Assert.False(data.CurrentNodeData.IsFirstChild);
-        }
+        ReadNextElement(reader, data); // Parent element
+        ReadNextElement(reader, data); // First child element
+        ReadNextElement(reader, data); // Next child element
 
-        [Theory]
-        [InlineData("<foo><bar><baz/></bar></foo>")]
-        [InlineData("<foo><bar>Content</bar></foo>")]
-        public void ReadNode_Adds_Ancestors_When_Depth_Increases(string xml) {
-            using var stream = new MemoryStream(Encoding.UTF8.GetBytes(xml));
-            using var reader = XmlReader.Create(stream);
+        Assert.False(data.CurrentNodeData.IsFirstChild);
+    }
 
-            var data = new ConversionData();
-            var ancestors = new Stack<ElementData>();
+    [Theory]
+    [InlineData("<foo><bar><baz/></bar></foo>")]
+    [InlineData("<foo><bar>Content</bar></foo>")]
+    public void ReadNode_Adds_Ancestors_When_Depth_Increases(string xml) {
+        using var stream = new MemoryStream(Encoding.UTF8.GetBytes(xml));
+        using var reader = XmlReader.Create(stream);
 
-            ancestors.Push(ReadNextElement(reader, data)); // Grandparent
-            ancestors.Push(ReadNextElement(reader, data)); // Parent
+        var data = new ConversionData();
+        var ancestors = new Stack<ElementData>();
 
-            reader.Read(); // move to inner node
+        ancestors.Push(ReadNextElement(reader, data)); // Grandparent
+        ancestors.Push(ReadNextElement(reader, data)); // Parent
 
-            data.ReadNode(reader);
+        reader.Read(); // move to inner node
 
-            Assert.Equal(ancestors, data.Ancestors);
-            Assert.Equal(ancestors, data.CurrentNodeData.Ancestors);
-        }
+        data.ReadNode(reader);
 
-        [Fact]
-        public void ReadNode_Removes_Ancestor_When_Depth_Decreases() {
-            const string xml = "<foo><bar><baz/></bar><bar/></foo><foo/>";
+        Assert.Equal(ancestors, data.Ancestors);
+        Assert.Equal(ancestors, data.CurrentNodeData.Ancestors);
+    }
 
-            using var stream = new MemoryStream(Encoding.UTF8.GetBytes(xml));
-            using var reader = XmlReader.Create(stream, new XmlReaderSettings() { ConformanceLevel = ConformanceLevel.Fragment });
+    [Fact]
+    public void ReadNode_Removes_Ancestor_When_Depth_Decreases() {
+        const string xml = "<foo><bar><baz/></bar><bar/></foo><foo/>";
 
-            var data = new ConversionData();
+        using var stream = new MemoryStream(Encoding.UTF8.GetBytes(xml));
+        using var reader = XmlReader.Create(stream, new XmlReaderSettings() { ConformanceLevel = ConformanceLevel.Fragment });
 
-            var ancestor = ReadNextElement(reader, data); // Grandparent foo
+        var data = new ConversionData();
 
-            ReadNextElement(reader, data); // Parent bar
-            ReadNextElement(reader, data); // Child baz
-            ReadNextElement(reader, data); // Parent sibling bar
+        var ancestor = ReadNextElement(reader, data); // Grandparent foo
 
-            Assert.Equal(ancestor, Assert.Single(data.Ancestors));
+        ReadNextElement(reader, data); // Parent bar
+        ReadNextElement(reader, data); // Child baz
+        ReadNextElement(reader, data); // Parent sibling bar
 
-            ReadNextElement(reader, data); // Grandparent sibling foo
+        Assert.Equal(ancestor, Assert.Single(data.Ancestors));
 
-            Assert.Empty(data.Ancestors);
-        }
+        ReadNextElement(reader, data); // Grandparent sibling foo
 
-        [Fact]
-        public void ReadNode_Leaves_Ancestor_When_Depth_Is_Unchanged() {
-            const string xml = "<foo><bar/><bar/></foo>";
+        Assert.Empty(data.Ancestors);
+    }
 
-            using var stream = new MemoryStream(Encoding.UTF8.GetBytes(xml));
-            using var reader = XmlReader.Create(stream);
+    [Fact]
+    public void ReadNode_Leaves_Ancestor_When_Depth_Is_Unchanged() {
+        const string xml = "<foo><bar/><bar/></foo>";
 
-            var data = new ConversionData();
+        using var stream = new MemoryStream(Encoding.UTF8.GetBytes(xml));
+        using var reader = XmlReader.Create(stream);
 
-            var ancestor = ReadNextElement(reader, data); // Grandparent foo
+        var data = new ConversionData();
 
-            ReadNextElement(reader, data); // Bar 1
+        var ancestor = ReadNextElement(reader, data); // Grandparent foo
 
-            Assert.Equal(ancestor, Assert.Single(data.Ancestors));
+        ReadNextElement(reader, data); // Bar 1
 
-            ReadNextElement(reader, data); // Bar 2
+        Assert.Equal(ancestor, Assert.Single(data.Ancestors));
 
-            Assert.Equal(ancestor, Assert.Single(data.Ancestors));
-        }
+        ReadNextElement(reader, data); // Bar 2
 
-        private ElementData ReadNextElement(XmlReader reader, ConversionData data) {
+        Assert.Equal(ancestor, Assert.Single(data.Ancestors));
+    }
+
+    private static ElementData ReadNextElement(XmlReader reader, ConversionData data) {
+        reader.Read();
+
+        while (reader.NodeType == XmlNodeType.EndElement) {
             reader.Read();
-
-            while (reader.NodeType == XmlNodeType.EndElement) {
-                reader.Read();
-            }
-
-            data.ReadNode(reader);
-
-            return Assert.IsType<ElementData>(data.CurrentNodeData);
         }
+
+        data.ReadNode(reader);
+
+        return Assert.IsType<ElementData>(data.CurrentNodeData);
     }
 }

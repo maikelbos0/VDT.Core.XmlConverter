@@ -3,59 +3,59 @@ using System.IO;
 using VDT.Core.XmlConverter.Markdown;
 using Xunit;
 
-namespace VDT.Core.XmlConverter.Tests.Markdown {
-    public class DefinitionTermConverterTests {
-        [Theory]
-        [InlineData("dt", true)]
-        [InlineData("DT", true)]
-        [InlineData("foo", false)]
-        public void IsValidFor(string elementName, bool expectedIsValid) {
-            var converter = new DefinitionTermConverter();
+namespace VDT.Core.XmlConverter.Tests.Markdown;
 
-            Assert.Equal(expectedIsValid, converter.IsValidFor(ElementDataHelper.Create(elementName)));
-        }
+public class DefinitionTermConverterTests {
+    [Theory]
+    [InlineData("dt", true)]
+    [InlineData("DT", true)]
+    [InlineData("foo", false)]
+    public void IsValidFor(string elementName, bool expectedIsValid) {
+        var converter = new DefinitionTermConverter();
 
-        [Theory]
-        [InlineData(false, 0, "\r\n\r\n")]
-        [InlineData(true, 0, "")]
-        [InlineData(false, 1, "\r\n")]
-        [InlineData(true, 1, "")]
-        [InlineData(false, 2, "")]
-        [InlineData(true, 2, "")]
-        public void RenderStart(bool isFirstChild, int trailingNewLineCount, string expectedOutput) {
-            using var writer = new StringWriter();
+        Assert.Equal(expectedIsValid, converter.IsValidFor(ElementDataHelper.Create(elementName)));
+    }
 
-            var converter = new DefinitionTermConverter();
-            var elementData = ElementDataHelper.Create(
-                "dt",
-                isFirstChild: isFirstChild,
-                additionalData: new Dictionary<string, object?> {
-                    { nameof(ContentTracker.TrailingNewLineCount), trailingNewLineCount }
-                }
-            );
+    [Theory]
+    [InlineData(false, 0, "\r\n\r\n")]
+    [InlineData(true, 0, "")]
+    [InlineData(false, 1, "\r\n")]
+    [InlineData(true, 1, "")]
+    [InlineData(false, 2, "")]
+    [InlineData(true, 2, "")]
+    public void RenderStart(bool isFirstChild, int trailingNewLineCount, string expectedOutput) {
+        using var writer = new StringWriter();
 
-            converter.RenderStart(elementData, writer);
+        var converter = new DefinitionTermConverter();
+        var elementData = ElementDataHelper.Create(
+            "dt",
+            isFirstChild: isFirstChild,
+            additionalData: new Dictionary<string, object?> {
+                { nameof(ContentTracker.TrailingNewLineCount), trailingNewLineCount }
+            }
+        );
 
-            Assert.Equal(expectedOutput, writer.ToString(), ignoreLineEndingDifferences: true);
-        }
+        converter.RenderStart(elementData, writer);
 
-        [Theory]
-        [InlineData(0, "\r\n")]
-        [InlineData(1, "")]
-        public void RenderEnd(int trailingNewLineCount, string expectedOutput) {
-            using var writer = new StringWriter();
+        Assert.Equal(expectedOutput, writer.ToString(), ignoreLineEndingDifferences: true);
+    }
 
-            var converter = new DefinitionTermConverter();
-            var elementData = ElementDataHelper.Create(
-                "dt",
-                additionalData: new Dictionary<string, object?> {
-                    { nameof(ContentTracker.TrailingNewLineCount), trailingNewLineCount }
-                }
-            );
+    [Theory]
+    [InlineData(0, "\r\n")]
+    [InlineData(1, "")]
+    public void RenderEnd(int trailingNewLineCount, string expectedOutput) {
+        using var writer = new StringWriter();
 
-            converter.RenderEnd(elementData, writer);
+        var converter = new DefinitionTermConverter();
+        var elementData = ElementDataHelper.Create(
+            "dt",
+            additionalData: new Dictionary<string, object?> {
+                { nameof(ContentTracker.TrailingNewLineCount), trailingNewLineCount }
+            }
+        );
 
-            Assert.Equal(expectedOutput, writer.ToString(), ignoreLineEndingDifferences: true);
-        }
+        converter.RenderEnd(elementData, writer);
+
+        Assert.Equal(expectedOutput, writer.ToString(), ignoreLineEndingDifferences: true);
     }
 }

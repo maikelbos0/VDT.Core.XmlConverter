@@ -2,35 +2,35 @@
 using VDT.Core.XmlConverter.Markdown;
 using Xunit;
 
-namespace VDT.Core.XmlConverter.Tests.Markdown {
-    public class ElementRemovingConverterTests {
-        [Fact]
-        public void RenderStart() {
-            using var writer = new StringWriter();
+namespace VDT.Core.XmlConverter.Tests.Markdown;
 
-            var converter = new ElementRemovingConverter("foo", "bar");
+public class ElementRemovingConverterTests {
+    [Fact]
+    public void RenderStart() {
+        using var writer = new StringWriter();
 
-            converter.RenderStart(ElementDataHelper.Create("bar"), writer);
+        var converter = new ElementRemovingConverter("foo", "bar");
 
-            Assert.Equal("", writer.ToString());
-        }
+        converter.RenderStart(ElementDataHelper.Create("bar"), writer);
 
-        [Fact]
-        public void ShouldRenderContent() {
-            var converter = new ElementRemovingConverter("foo", "bar");
+        Assert.Equal("", writer.ToString());
+    }
 
-            Assert.False(converter.ShouldRenderContent(ElementDataHelper.Create("bar")));
-        }
+    [Fact]
+    public void ShouldRenderContent() {
+        var converter = new ElementRemovingConverter("foo", "bar");
 
-        [Fact]
-        public void RenderEnd() {
-            using var writer = new StringWriter();
+        Assert.False(converter.ShouldRenderContent(ElementDataHelper.Create("bar")));
+    }
 
-            var converter = new ElementRemovingConverter("foo", "bar");
+    [Fact]
+    public void RenderEnd() {
+        using var writer = new StringWriter();
 
-            converter.RenderEnd(ElementDataHelper.Create("bar"), writer);
+        var converter = new ElementRemovingConverter("foo", "bar");
 
-            Assert.Equal("", writer.ToString());
-        }
+        converter.RenderEnd(ElementDataHelper.Create("bar"), writer);
+
+        Assert.Equal("", writer.ToString());
     }
 }
